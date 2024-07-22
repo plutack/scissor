@@ -16,16 +16,7 @@ import {
 } from "@/components/ui/form";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { DatePicker } from "@/components/auth/date-picker";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import { Button } from "@/components/ui/button";
 import { login } from "@/actions/login";
 
@@ -36,10 +27,7 @@ export const RegisterForm = () => {
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      dob: undefined,
-      gender: undefined,
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -59,90 +47,31 @@ export const RegisterForm = () => {
   return (
     <CardWrapper
       headerLabel="Register a new account"
-      backButtonLabel="Login"
+      backButtonLabel="Have an account? Login"
       backButtonHref="/auth/login"
       showSocial
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        disabled={isPending}
-                        placeholder="John"
-                        type="text"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        disabled={isPending}
-                        placeholder="Doe"
-                        type="text"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex items-center gap-3">
-              <FormField
-                control={form.control}
-                name="dob"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Date of Birth</FormLabel>
-                    <FormControl>
-                      <DatePicker />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Gender</FormLabel>
-                    <FormControl>
-                      <Select>
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue
-                            placeholder="select gender"
-                            className="text-gray-500"
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={isPending}
+                      placeholder="john123"
+                      type="text"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -194,17 +123,7 @@ export const RegisterForm = () => {
                         type="password"
                       />
                     </FormControl>
-                    <FormMessage>
-                      {form.formState.errors.confirmPassword &&
-                        form.formState.errors.confirmPassword.message}
-                    </FormMessage>
-                    {form.formState.errors.confirmPassword &&
-                      form.formState.errors.confirmPassword.type ===
-                        "custom" && (
-                        <p className="text-sm font-medium text-destructive">
-                          {form.formState.errors.confirmPassword.message}
-                        </p>
-                      )}
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -213,7 +132,7 @@ export const RegisterForm = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button className="w-full" type="submit" disabled={isPending}>
-            Have an account? Login
+            Login
           </Button>
         </form>
       </Form>
