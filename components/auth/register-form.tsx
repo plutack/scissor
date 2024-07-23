@@ -37,6 +37,7 @@ export const RegisterForm = () => {
     startTransition(() => {
       register(values).then((data) => {
         console.log(values);
+        console.log(data);
         setError(data.error);
         setSuccess(data.success);
       });
@@ -131,7 +132,7 @@ export const RegisterForm = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button className="w-full" type="submit" disabled={isPending}>
-            Login
+            Register
           </Button>
         </form>
       </Form>
