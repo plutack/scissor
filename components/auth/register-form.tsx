@@ -18,7 +18,7 @@ import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { login } from "@/actions/login";
+import { register } from "@/actions/register";
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -27,16 +27,15 @@ export const RegisterForm = () => {
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
   });
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-    console.log("Form errors:", form.formState.errors);
     startTransition(() => {
-      login(values).then((data) => {
+      register(values).then((data) => {
         console.log(values);
         setError(data.error);
         setSuccess(data.success);
@@ -56,15 +55,15 @@ export const RegisterForm = () => {
           <div className="space-y-4">
             <FormField
               control={form.control}
-              name="username"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="john123"
+                      placeholder="John Doe"
                       type="text"
                     />
                   </FormControl>
