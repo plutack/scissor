@@ -32,10 +32,24 @@ export const LoginForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    setError(""); // Clear any previous errors
+
     startTransition(() => {
-      login(values).then((data) => {
-        if (data) setError(data.error);
-      });
+      login(values)
+
+      // TODO fix types
+        .then((data: any) => {
+          if (data.error) {
+            setError(data.error);
+          } else if (data.success) {
+            // Handle successful login
+            window.location.href = data.redirectUrl;
+          }
+        })
+        .catch((error) => {
+          console.error("Login error:", error);
+          setError("An unexpected error occurred");
+        });
     });
   };
 

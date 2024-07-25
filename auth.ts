@@ -13,7 +13,8 @@ declare module "next-auth" {
    */
   interface User {
     id?: string;
-    role?: userRole ;
+    role?: userRole;
+    accessToken?: string;
   }
   /**
    * The shape of the account object returned in the OAuth providers' `account` callback,
@@ -36,7 +37,7 @@ declare module "next-auth/jwt" {
     // idToken?: string;
     /** User role */
     id: string;
-    role?: userRole ;
+    role?: userRole;
   }
 }
 
@@ -48,16 +49,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         // User is available during sign-in
+        console.log(user);
         token.role = user.role;
-        console.log("token", token);
+        console.log("token1", token);
       }
       return token;
     },
     session({ session, token }) {
+      console.log("token2", token);
       if (token.sub) {
         session.user.id = token.sub;
         session.user.role = token.role;
+        session.user.accessToken = token.jti;
       }
+      console.log("session", session);
       return session;
     },
   },
