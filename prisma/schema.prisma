@@ -19,9 +19,10 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   password      String?
-  role          userRole @default(USER)
+  role          userRole  @default(USER)
   image         String?
   accounts      Account[]
+  Link          Link[]
 
   @@map("users")
 }
@@ -44,4 +45,18 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
+}
+
+model Link {
+  id           String   @id @default(cuid())
+  userId       String?  @map("user_id")
+  link         String
+  customSuffix String   @unique
+  clicks       Int      @default(0)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("links")
 }

@@ -16,3 +16,11 @@ export const RegisterSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const shortenLinkSchema = z.object({
+  link: z.string().url({ message: "This is a invalid url" }),
+  customSuffix: z
+    .string()
+    .min(3, { message: "Custom suffix is too short" })
+    .optional(),
+});

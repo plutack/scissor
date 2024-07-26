@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 import "next-auth";
 import { userRole } from "@prisma/client";
+import { encode } from "next-auth/jwt";
 
 declare module "next-auth" {
   /**
@@ -46,24 +47,28 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   ...authConfig,
   callbacks: {
-    jwt({ token, user }) {
+    
+    jwt({ token, user, }) {
       if (user) {
         // User is available during sign-in
         console.log(user);
-        token.role = user.role;
+        token.jti = user.role;
+        
+
         console.log("token1", token);
       }
       return token;
     },
+    
     session({ session, token }) {
       console.log("token2", token);
       if (token.sub) {
         session.user.id = token.sub;
         session.user.role = token.role;
-        session.user.accessToken = token.jti;
       }
       console.log("session", session);
       return session;
     },
+    
   },
 });
