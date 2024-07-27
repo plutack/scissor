@@ -52,7 +52,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (user) {
         // User is available during sign-in
         console.log(user);
-        token.jti = user.role;
+        token.userToken = user.accessToken;
         
 
         console.log("token1", token);

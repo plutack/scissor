@@ -4,6 +4,7 @@ import { auth, signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
 import {} from "next-auth/jwt";
+import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   try {
@@ -23,11 +24,13 @@ export async function POST(request: Request) {
       callbackUrl: DEFAULT_LOGIN_REDIRECT,
     });
     const session = await auth();
-
+    if (session && session.user) {
+      session.user.accessToken = cookies().get("authjs.session-token")?.value;
+    }
     return NextResponse.json({
       success: true,
       redirectUrl: DEFAULT_LOGIN_REDIRECT,
-      user: session,
+      user: session?.user,
     });
   } catch (error) {
     if (error instanceof AuthError) {
