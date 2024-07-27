@@ -16,9 +16,10 @@ export const RegisterSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
-
+const urlRegex =
+  /^((?:ftp|http|https)?:\/\/)?((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d_]*)?$/i;
 export const shortenLinkSchema = z.object({
-  link: z.string().url({ message: "This is a invalid url" }),
+  link: z.string().regex(urlRegex, { message: "Invalid URL" }),
   customSuffix: z
     .string()
     .min(3, { message: "Custom suffix is too short" })
