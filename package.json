@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "npx patch-package"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.1",
@@ -37,6 +38,8 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/har-format": "^1.2.15",
+    "@types/hast": "^3.0.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

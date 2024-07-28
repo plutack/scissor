@@ -4,5 +4,8 @@
   },
   "search.exclude": {
     "": true
-  }
+  },
+  "cSpell.words": [
+    "tailwindcss"
+  ]
 }
