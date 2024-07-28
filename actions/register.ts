@@ -1,25 +1,29 @@
-"use server";
 import { RegisterSchema } from "@/schemas";
-import * as z from "zod";
+import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { findUserByEmail } from "@/data/user";
-export const register = async (values: z.infer<typeof RegisterSchema>) => {
-  const validatedFields = RegisterSchema.safeParse(values);
+import ky, { HTTPError } from "ky";
 
-  if (!validatedFields.success) {
-    return { error: "Invalid fields" };
+export const register = async (values: z.infer<typeof RegisterSchema>) => {
+  try {
+    const data = await ky
+      .post("/api/auth/register", {
+        json: values,
+      })
+      .json();
+
+    return data;
+  } catch (error) {
+    console.error("Login error:", error);
+    if (error instanceof HTTPError) {
+      // ky throws HTTPError for non-2xx responses
+      const errorData = await error.response.json();
+      return { error: errorData.error || "An error occurred" };
+    } else if (error instanceof Error) {
+      return { error: error.message };
+    } else {
+      return { error: "An unexpected error occurred" };
+    }
   }
-  const { name, email, password } = validatedFields.data;
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const existingUser = await findUserByEmail(email);
-  if (existingUser) return { error: "email already in use" };
-  await db.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-    },
-  });
-  return { success: "Email sent" };
 };

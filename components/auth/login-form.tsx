@@ -32,12 +32,11 @@ export const LoginForm = () => {
     },
   });
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    setError(""); // Clear any previous errors
+    setError("");
 
+    // TODO fix types
     startTransition(() => {
       login(values)
-
-      // TODO fix types
         .then((data: any) => {
           if (data.error) {
             setError(data.error);

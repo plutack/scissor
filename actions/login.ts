@@ -1,5 +1,5 @@
 import { LoginSchema } from "@/schemas";
-import * as z from "zod";
+import { z } from "zod";
 import ky, { HTTPError } from "ky";
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {

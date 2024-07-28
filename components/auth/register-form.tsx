@@ -36,8 +36,6 @@ export const RegisterForm = () => {
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     startTransition(() => {
       register(values).then((data) => {
-        console.log(values);
-        console.log(data);
         setError(data.error);
         setSuccess(data.success);
       });

@@ -1,9 +1,7 @@
-import { NextResponse } from "next/server";
 import { LoginSchema } from "@/schemas";
 import { auth, signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
-import {} from "next-auth/jwt";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
@@ -12,7 +10,7 @@ export async function POST(request: Request) {
     const validatedFields = LoginSchema.safeParse(body);
     console.log(validatedFields);
     if (!validatedFields.success) {
-      return NextResponse.json({ error: "Invalid fields" }, { status: 400 });
+      return Response.json({ error: "Invalid fields" }, { status: 400 });
     }
 
     const { email, password } = validatedFields.data;
@@ -27,7 +25,7 @@ export async function POST(request: Request) {
     if (session && session.user) {
       session.user.accessToken = cookies().get("authjs.session-token")?.value;
     }
-    return NextResponse.json({
+    return Response.json({
       success: true,
       redirectUrl: DEFAULT_LOGIN_REDIRECT,
       user: session?.user,
@@ -36,18 +34,18 @@ export async function POST(request: Request) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return NextResponse.json(
+          return Response.json(
             { error: "Invalid credentials" },
             { status: 401 },
           );
         default:
-          return NextResponse.json(
+          return Response.json(
             { error: "Something went wrong" },
             { status: 500 },
           );
       }
     }
-    return NextResponse.json(
+    return Response.json(
       { error: "An unexpected error occurred" },
       { status: 500 },
     );
