@@ -2,7 +2,13 @@ import { LoginSchema } from "@/schemas";
 import { z } from "zod";
 import ky, { HTTPError } from "ky";
 
-export const login = async (values: z.infer<typeof LoginSchema>) => {
+interface ErrorMessage {
+  error?: string;
+}
+
+export const login = async (
+  values: z.infer<typeof LoginSchema>,
+): Promise<ErrorMessage> => {
   try {
     const data = await ky
       .post("/api/auth/login", {
@@ -10,9 +16,9 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
       })
       .json();
 
-    return data;
+    return {};
   } catch (error) {
-    console.error("Login error:", error);
+
     if (error instanceof HTTPError) {
       // ky throws HTTPError for non-2xx responses
       const errorData = await error.response.json();

@@ -28,7 +28,7 @@ export default function Home() {
           </div>
         </main>
       ) : (
-        <DashBoard />
+        <DashBoard session={session} />
       )}
     </>
   );

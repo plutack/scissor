@@ -1,10 +1,15 @@
+import { Session } from "next-auth";
 import { Button } from "./ui/button";
 import { logout } from "@/actions/logout";
 
-export const DashBoard = () => {
+interface SessionProps {
+  session: Session;
+}
+
+export const DashBoard = ({ session }: SessionProps) => {
   return (
     <div className=" flex flex-col h-full bg-slate-500">
-      <span className="text-orange-500">user is logged in </span>
+      <span className="text-orange-500">{JSON.stringify(session)} </span>
       <form action={logout}>
         <Button type="submit">Logout</Button>
       </form>

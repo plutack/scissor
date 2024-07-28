@@ -19,6 +19,7 @@ import { FormSuccess } from "@/components/form-success";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { login } from "@/actions/login";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -36,19 +37,12 @@ export const LoginForm = () => {
 
     // TODO fix types
     startTransition(() => {
-      login(values)
-        .then((data: any) => {
-          if (data.error) {
-            setError(data.error);
-          } else if (data.success) {
-            // Handle successful login
-            window.location.href = data.redirectUrl;
-          }
-        })
-        .catch((error) => {
-          console.error("Login error:", error);
-          setError("An unexpected error occurred");
-        });
+      login(values).then((data) => {
+        if (data.error) {
+          setError(data.error);
+        }
+        window.location.href = DEFAULT_LOGIN_REDIRECT;
+      });
     });
   };
 

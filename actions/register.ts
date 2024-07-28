@@ -2,10 +2,16 @@ import { RegisterSchema } from "@/schemas";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { findUserByEmail } from "@/data/user";
 import ky, { HTTPError } from "ky";
 
-export const register = async (values: z.infer<typeof RegisterSchema>) => {
+interface ErrorMessage {
+  success?: string;
+  error?: string;
+}
+
+export const register = async (
+  values: z.infer<typeof RegisterSchema>,
+): Promise<ErrorMessage> => {
   try {
     const data = await ky
       .post("/api/auth/register", {
@@ -13,7 +19,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
       })
       .json();
 
-    return data;
+    return { success: "Verification message sent" };
   } catch (error) {
     console.error("Login error:", error);
     if (error instanceof HTTPError) {
