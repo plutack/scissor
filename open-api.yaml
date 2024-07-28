@@ -1,0 +1,481 @@
+openapi: 3.1.0
+x-stoplight:
+  id: 7699fj8nsvcwl
+info:
+  title: link-slice
+  version: '1.0'
+  summary: ''
+  description: This document describes link-slice API
+servers:
+  - url: 'https://linkslice.talut.tech/api'
+    description: production
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: User Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Get User Alice Smith:
+                  value:
+                    id: 142
+                    firstName: Alice
+                    lastName: Smith
+                    email: alice.smith@gmail.com
+                    dateOfBirth: '1997-10-31'
+                    emailVerified: true
+                    signUpDate: '2019-08-24'
+        '404':
+          description: User Not Found
+      operationId: get-users-userId
+      description: Retrieve the information of the user with the matching user ID.
+      x-stoplight:
+        id: 215ij7qg9jeol
+    patch:
+      summary: Update User Information
+      operationId: patch-users-userId
+      responses:
+        '200':
+          description: User Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Updated User Rebecca Baker:
+                  value:
+                    id: 13
+                    firstName: Rebecca
+                    lastName: Baker
+                    email: rebecca@gmail.com
+                    dateOfBirth: '1985-10-02'
+                    emailVerified: false
+                    createDate: '2019-08-24'
+        '404':
+          description: User Not Found
+        '409':
+          description: Email Already Taken
+      description: Update the information of an existing user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  description: 'If a new email is given, the user''s email verified property will be set to false.'
+                dateOfBirth:
+                  type: string
+            examples:
+              Update First Name:
+                value:
+                  firstName: Rebecca
+              Update Email:
+                value:
+                  email: rebecca@gmail.com
+              Update Last Name & Date of Birth:
+                value:
+                  lastName: Baker
+                  dateOfBirth: '1985-10-02'
+        description: Patch user properties to update.
+      x-stoplight:
+        id: 97q9d6zvgtlth
+    servers: []
+  /user:
+    post:
+      summary: Create New User
+      operationId: post-user
+      responses:
+        '200':
+          description: User Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                New User Bob Fellow:
+                  value:
+                    id: 12
+                    firstName: Bob
+                    lastName: Fellow
+                    email: bob.fellow@gmail.com
+                    dateOfBirth: '1996-08-24'
+                    emailVerified: false
+                    createDate: '2020-11-18'
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  format: date
+              required:
+                - firstName
+                - lastName
+                - email
+                - dateOfBirth
+            examples:
+              Create User Bob Fellow:
+                value:
+                  firstName: Bob
+                  lastName: Fellow
+                  email: bob.fellow@gmail.com
+                  dateOfBirth: '1996-08-24'
+        description: Post the necessary fields for the API to create a new user.
+      description: Create a new user.
+      x-stoplight:
+        id: 77jw52ud16h5a
+  /auth/login:
+    post:
+      summary: Login
+      responses: {}
+      operationId: post-auth-login
+      x-stoplight:
+        id: veag1uaapne48
+      description: Get user Access Token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  x-stoplight:
+                    id: gp46hk185teg9
+                  description: User email
+                password:
+                  type: string
+                  x-stoplight:
+                    id: 8qh7vqsuwu5cm
+                  description: User password
+            examples:
+              Example 1:
+                value:
+                  email: string
+                  password: string
+        description: Post the necessary fields for the API to create a user session.
+  /links:
+    get:
+      summary: Get all links
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      userId:
+                        type: 'null'
+                      link:
+                        type: string
+                      customSuffix:
+                        type: string
+                      clicks:
+                        type: integer
+                      createdAt:
+                        type: string
+                      updatedAt:
+                        type: string
+                x-examples:
+                  Example 1:
+                    success: true
+                    data:
+                      id: clz4j6rz4000638ruq92afwzw
+                      userId: null
+                      link: 'https://api.github.co'
+                      customSuffix: sBseU
+                      clicks: 0
+                      createdAt: '2024-07-27T19:35:21.377Z'
+                      updatedAt: '2024-07-27T19:35:21.377Z'
+      operationId: get-link
+      x-stoplight:
+        id: dcw1ksmw7vmlo
+      description: Retrieve all the links created  by a user using access token
+      parameters:
+        - schema:
+            type: string
+          in: header
+      security:
+        - valid access token: []
+    parameters: []
+  '/links/{linkId}':
+    parameters:
+      - schema:
+          type: string
+        name: linkId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: linkId
+        in: path
+        required: true
+    get:
+      summary: Get link by link ID
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+                x-examples:
+                  Example 1:
+                    id: clz4j6rz4000638ruq92afwzw
+                    userId: null
+                    link: 'https://api.github.co'
+                    customSuffix: sBseU
+                    clicks: 0
+                    createdAt: '2024-07-27T19:35:21.377Z'
+                    updatedAt: '2024-07-27T19:35:21.377Z'
+              examples:
+                Example 1:
+                  value:
+                    id: string
+                    userId: string
+                    link: string
+                    customSuffix: string
+                    clicks: 0
+                    createdAt: string
+                    updatedAt: string
+      operationId: get-links-linkId
+      x-stoplight:
+        id: xloox1flw99xq
+      description: Retrieve the information of the link with the matching link ID.
+      security:
+        - {}
+        - valid access token: []
+    patch:
+      summary: Update Link Custom suffix
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      userId:
+                        type: string
+                      link:
+                        type: string
+                      customSuffix:
+                        type: string
+                      clicks:
+                        type: integer
+                      createdAt:
+                        type: string
+                      updatedAt:
+                        type: string
+                x-examples:
+                  Example 1:
+                    success: true
+                    data:
+                      id: clz4ohf7f0007pk3hyuiedf55
+                      userId: clz0c0pzw0000cetc7zbaga21
+                      link: 'https://www.github.com'
+                      customSuffix: google1s11
+                      clicks: 0
+                      createdAt: '2024-07-27T22:03:36.123Z'
+                      updatedAt: '2024-07-27T22:04:45.798Z'
+              examples:
+                Example 1:
+                  value:
+                    success: true
+                    data:
+                      id: string
+                      userId: string
+                      link: string
+                      customSuffix: string
+                      clicks: 0
+                      createdAt: string
+                      updatedAt: string
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: custom suffix in use
+              examples:
+                Example 1:
+                  value:
+                    success: true
+                    error: string
+      operationId: patch-links-linkId
+      x-stoplight:
+        id: t0p2rme6qqbdv
+      description: Update the custom suffix of an existing link
+      security:
+        - valid access token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  customSuffix: google1s11
+              required:
+                - customSuffix
+              properties:
+                customSuffix:
+                  type: string
+            examples:
+              Example 1:
+                value:
+                  customSuffix: string
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      examples:
+        - id: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          emailVerified: true
+          signUpDate: '2019-08-24'
+      x-stoplight:
+        id: q197cafncs4p7
+      required:
+        - id
+        - emailVerified
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the given user.
+          x-stoplight:
+            id: ebhlz78i6cs4d
+        name:
+          type: string
+          x-stoplight:
+            id: iwcj987i79z2p
+        email:
+          type: string
+          format: email
+          x-stoplight:
+            id: 4xifz93kp6v7y
+        emailVerified:
+          type: boolean
+          description: Set to true if the user's email has been verified.
+          x-stoplight:
+            id: my0htzvaam3bd
+        password:
+          type: string
+          x-stoplight:
+            id: g80lcl8awx7hi
+        role:
+          type: string
+          format: date
+          description: The date that the user was created.
+          x-stoplight:
+            id: 4znovbj7xpm5c
+    Link:
+      title: Link
+      x-stoplight:
+        id: nsm7us8f3kul9
+      type: object
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: a4b0nyczaa5k0
+        userId:
+          type: string
+          x-stoplight:
+            id: choify3umrm8r
+        customSuffix:
+          type: string
+          x-stoplight:
+            id: v8yctu5h1zp1f
+        clicks:
+          type: number
+          x-stoplight:
+            id: yyk9b9w8enake
+        createdAt:
+          type: string
+          x-stoplight:
+            id: ji3uph22zwl67
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          x-stoplight:
+            id: albsfkcc9fhf6
+          format: date-time
+      description: ''
+      examples:
+        - id: string
+          userId: string
+          customSuffix: string
+          clicks: 0
+          createdAt: '2019-08-24T14:15:22Z'
+          updatedAt: '2019-08-24T14:15:22Z'
+  securitySchemes:
+    valid access token:
+      type: http
+      scheme: bearer
+      description: Authenticated user session token
