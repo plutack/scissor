@@ -50,16 +50,23 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         // User is available during sign-in
+        console.log(user);
         token.userToken = user.accessToken;
+
+        console.log("token1", token);
       }
       return token;
     },
 
     session({ session, token }) {
+      console.log("token2", token);
       if (token.sub) {
         session.user.id = token.sub;
         session.user.role = token.role;
       }
+      const { id, ...restOfUser } = session.user;
+      session.user = { id, ...restOfUser };
+      console.log("session", session);
       return session;
     },
   },

@@ -18,15 +18,11 @@ export const login = async (
 
     return {};
   } catch (error) {
-
     if (error instanceof HTTPError) {
       // ky throws HTTPError for non-2xx responses
       const errorData = await error.response.json();
       return { error: errorData.error || "An error occurred" };
-    } else if (error instanceof Error) {
-      return { error: error.message };
-    } else {
-      return { error: "An unexpected error occurred" };
     }
+    return { error: "An unexpected error occurred" };
   }
 };
