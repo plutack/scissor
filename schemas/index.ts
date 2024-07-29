@@ -3,13 +3,12 @@ import * as z from "zod";
 const urlRegex =
   /^((?:ftp|http|https)?:\/\/)?((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(\:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(\#[-a-z\d_]*)?$/i;
 
-
-export const LoginSchema = z.object({
+export const loginSchema = z.object({
   email: z.string().email({ message: "Email is required" }),
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-export const RegisterSchema = z
+export const registerSchema = z
   .object({
     name: z.string().min(1, { message: "First name is required" }),
     email: z.string().email({ message: "Email is required" }),
@@ -20,7 +19,6 @@ export const RegisterSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
-
 
 export const shortenLinkSchema = z.object({
   link: z.string().regex(urlRegex, { message: "Invalid URL" }),
