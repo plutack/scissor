@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react';
 import ky from 'ky';
-import { notFound } from 'next/navigation';
+import NotFound from '@/app/not-found';
 
 export default function CustomSuffixPage({ params }: { params: { customSuffix: string } }) {
   const { customSuffix } = params;
@@ -15,17 +15,17 @@ export default function CustomSuffixPage({ params }: { params: { customSuffix: s
         const result: { success: boolean; data: string } = await ky.get(`/api/link/public/${customSuffix}`).json();
 
         setRedirecting(true);
-        setRedirectUrl(result.data); // result.data is guaranteed to be a string here
+        setRedirectUrl(result.data); 
 
         setTimeout(() => {
-          // Always assume result.data is valid, directly use it for redirection
-          const redirectTo = /^https?:\/\//i.test(result.data) ? result.data : `http://${result.data}`; // Add http if necessary
+          
+          const redirectTo = result.data
 
-          window.location.href = redirectTo; // Redirect to the link after 3 seconds
+          window.location.href = redirectTo; 
         }, 3000);
       } catch (error) {
-        console.error(error); // Log the error for debugging
-        notFound(); // Handle any unexpected errors by rendering the 404 page
+        console.error(error); 
+        window.location.href = '/invalid-link';
       } finally {
         setLoading(false);
       }
