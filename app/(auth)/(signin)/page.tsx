@@ -1,12 +1,13 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import UserAuthForm from '@/components/forms/user-auth-form';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Metadata } from "next";
+import Link from "next/link";
+import UserAuthForm from "@/components/forms/user-auth-form";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ShortenLinkForm } from "@/components/forms/shorten-link-form";
 
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.'
+  title: "Authentication",
+  description: "Authentication forms built using the components.",
 };
 
 export default function AuthenticationPage() {
@@ -15,8 +16,8 @@ export default function AuthenticationPage() {
       <Link
         href="/examples/authentication"
         className={cn(
-          buttonVariants({ variant: 'ghost' }),
-          'absolute right-4 top-4 hidden md:right-8 md:top-8'
+          buttonVariants({ variant: "ghost" }),
+          "absolute right-4 top-4 hidden md:right-8 md:top-8",
         )}
       >
         Login
@@ -38,7 +39,10 @@ export default function AuthenticationPage() {
           </svg>
           Logo
         </div>
-        <div className="relative z-20 mt-auto">
+        <div className="relative z-10">
+          <ShortenLinkForm />
+        </div>
+        <div className="relative z-20 mt-auto bg">
           <blockquote className="space-y-2">
             <p className="text-lg">
               &ldquo;This library has saved me countless hours of work and
@@ -60,23 +64,6 @@ export default function AuthenticationPage() {
             </p>
           </div>
           <UserAuthForm />
-          <p className="px-8 text-center text-sm text-muted-foreground">
-            By clicking continue, you agree to our{' '}
-            <Link
-              href="/terms"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Terms of Service
-            </Link>{' '}
-            and{' '}
-            <Link
-              href="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Privacy Policy
-            </Link>
-            .
-          </p>
         </div>
       </div>
     </div>

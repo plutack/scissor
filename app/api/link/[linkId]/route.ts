@@ -18,10 +18,13 @@ export async function GET(
   });
 
   if (!existingLink) {
-    return Response.json({ error: "Link not found" }, { status: 404 });
+    return Response.json(
+      { success: false, message: "Link not found" },
+      { status: 404 },
+    );
   }
 
-  return Response.json(existingLink);
+  return Response.json({ success: true, data: existingLink }, { status: 200 });
 }
 
 export async function PATCH(
@@ -65,7 +68,10 @@ export async function PATCH(
     const validatedFields = changeCustomSuffixSchema.safeParse(body);
     console.log(validatedFields);
     if (!validatedFields.success) {
-      return Response.json({ success:false, message: "Invalid fields" }, { status: 400 });
+      return Response.json(
+        { success: false, message: "Invalid fields" },
+        { status: 400 },
+      );
     }
 
     const { customSuffix } = validatedFields.data;
