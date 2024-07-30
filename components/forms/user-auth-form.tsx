@@ -10,19 +10,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
-import { loginSchema } from "@/schemas";
+import { loginSchema, registerSchema } from "@/schemas";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
-
-
-const registerSchema = z.object({
-  email: z.string().email({ message: "Enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-});
+import { login } from "@/actions/login";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 type LoginFormValue = z.infer<typeof loginSchema>;
 type RegisterFormValue = z.infer<typeof registerSchema>;
@@ -40,14 +34,15 @@ export default function UserAuthForm() {
 
   const registerForm = useForm<RegisterFormValue>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { name: "", email: "", password: "" },
   });
 
-  const onLoginSubmit = async (data: LoginFormValue) => {
-    signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      callbackUrl: callbackUrl ?? "/dashboard",
+  const onLoginSubmit = async (values: LoginFormValue) => {
+    login(values).then((data) => {
+      // if (data.error) {
+      //   setError(data.error);
+      // }
+      window.location.href = DEFAULT_LOGIN_REDIRECT;
     });
   };
 
@@ -118,6 +113,24 @@ export default function UserAuthForm() {
           >
             <FormField
               control={registerForm.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel> 
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter your name..."
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={registerForm.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
@@ -161,7 +174,9 @@ export default function UserAuthForm() {
       )}
       <div className="text-center mt-4">
         <Button variant="link" onClick={toggleForm}>
-          {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
+          {isLogin
+            ? "Don't have an account? Register"
+            : "Already have an account? Login"}
         </Button>
       </div>
     </>

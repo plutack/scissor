@@ -13,6 +13,7 @@ import {
   Image,
   Laptop,
   LayoutDashboardIcon,
+  Link2Icon,
   Loader2,
   LogIn,
   LucideIcon,
@@ -34,6 +35,7 @@ import {
 export type Icon = LucideIcon;
 
 export const Icons = {
+  link: Link2Icon,
   dashboard: LayoutDashboardIcon,
   logo: Command,
   login: LogIn,

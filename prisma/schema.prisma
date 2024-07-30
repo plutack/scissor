@@ -14,15 +14,17 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  password      String?
-  role          userRole  @default(USER)
-  image         String?
-  accounts      Account[]
-  Link          Link[]
+  id                 String    @id @default(cuid())
+  name               String?
+  email              String?   @unique
+  emailVerified      DateTime? @map("email_verified")
+  password           String?
+  role               userRole  @default(USER)
+  image              String?
+  linkCount          Int       @default(0)
+  uniqueCountryCount Int       @default(0)
+  accounts           Account[]
+  links              Link[]
 
   @@map("users")
 }
@@ -55,8 +57,21 @@ model Link {
   clicks       Int      @default(0)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
-
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  visits       Visit[]
 
   @@map("links")
+}
+
+model Visit {
+  id        String   @id @default(cuid())
+  linkId    String
+  country   String
+  count     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@unique([linkId, country])
+  @@map("visits")
 }

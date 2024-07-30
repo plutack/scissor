@@ -1,31 +1,34 @@
-import { AreaGraph } from '@/components/charts/area-graph';
-import { BarGraph } from '@/components/charts/bar-graph';
-import { PieGraph } from '@/components/charts/pie-graph';
-import { CalendarDateRangePicker } from '@/components/date-range-picker';
-import PageContainer from '@/components/layout/page-container';
-import { RecentSales } from '@/components/recent-sales';
-import { Button } from '@/components/ui/button';
+import { AreaGraph } from "@/components/charts/area-graph";
+import { BarGraph } from "@/components/charts/bar-graph";
+import { PieGraph } from "@/components/charts/pie-graph";
+import { CalendarDateRangePicker } from "@/components/date-range-picker";
+import PageContainer from "@/components/layout/page-container";
+import { RecentLinks } from "@/components/recent-links";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { auth } from "@/auth";
 
-export default function page() {
+export default async function page() {
+  const session = await auth();
+  console.log(session);
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-2">
-        <div className="flex items-center justify-between space-y-2">
+        <div className="flex h-full items-center justify-between space-y-2">
           <h2 className="text-2xl font-bold tracking-tight">
             Hi, Welcome back 👋
           </h2>
-          <div className="hidden items-center space-x-2 md:flex">
+          {/* <div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
             <Button>Download</Button>
-          </div>
+          </div> */}
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
@@ -35,11 +38,11 @@ export default function page() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total Revenue
+                    Total Clicks
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -55,16 +58,15 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
-                  <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
-                  </p>
+                  <div className="text-2xl font-bold">20</div>
+                  {/* <p className="text-xs text-muted-foreground">
+                  </p> */}
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Subscriptions
+                    Total Links Created
                   </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -82,15 +84,17 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+2350</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-2xl font-bold">78</div>
+                  {/* <p className="text-xs text-muted-foreground">
                     +180.1% from last month
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sales</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Total Unique Countries
+                  </CardTitle>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -106,34 +110,9 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+12,234</div>
+                  <div className="text-2xl font-bold">65</div>
                   <p className="text-xs text-muted-foreground">
                     +19% from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Active Now
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">
-                    +201 since last hour
                   </p>
                 </CardContent>
               </Card>
@@ -144,21 +123,15 @@ export default function page() {
               </div>
               <Card className="col-span-4 md:col-span-3">
                 <CardHeader>
-                  <CardTitle>Recent Sales</CardTitle>
+                  <CardTitle>Recent Links Created</CardTitle>
                   <CardDescription>
-                    You made 265 sales this month.
+                    Here are your most recent links
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <RecentSales />
+                  <RecentLinks />
                 </CardContent>
               </Card>
-              <div className="col-span-4">
-                <AreaGraph />
-              </div>
-              <div className="col-span-4 md:col-span-3">
-                <PieGraph />
-              </div>
             </div>
           </TabsContent>
         </Tabs>

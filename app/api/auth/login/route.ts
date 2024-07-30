@@ -1,4 +1,4 @@
-import { LoginSchema } from "@/schemas";
+import { loginSchema } from "@/schemas";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
@@ -10,7 +10,7 @@ import sanitizeUser from "@/utils/sanitize-user";
 export async function POST(request: Request, response: Response) {
   try {
     const body = await request.json();
-    const validatedFields = LoginSchema.safeParse(body);
+    const validatedFields = loginSchema.safeParse(body);
     console.log(validatedFields);
     if (!validatedFields.success) {
       return Response.json(

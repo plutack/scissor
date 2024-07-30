@@ -1,39 +1,42 @@
 // FIXME ensure /* is skipped
 
-
-
 import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
 import {
   authRoutes,
   apiAuthPrefix,
   DEFAULT_LOGIN_REDIRECT,
-  PublicRoutes,
+  ProtectedRoutes,
   loginRoute,
 } from "@/routes";
 
 const { auth } = NextAuth(authConfig);
 
-export default auth((req) => {
-  // const { nextUrl } = req;
-  // const isLoggedIn = !!req.auth;
-  // console.log("loggedin", isLoggedIn);
-  // const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  // const isPublicRoutes = PublicRoutes.includes(nextUrl.pathname);
-  // const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+export default auth((request) => {
+  const { pathname } = request.nextUrl;
 
-  // if (isApiAuthRoute) {
-  //   return;
-  // }
-  // if (isAuthRoute) {
-  //   if (isLoggedIn) {
-  //     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-  //   }
-  //   return;
-  // }
-  // if (!isLoggedIn && !isPublicRoutes) {
-  //   return Response.redirect(new URL(loginRoute, nextUrl));
-  // }
+  const isLoggedIn = !!request.auth;
+  const isAuthRoute = authRoutes.includes(pathname);
+  const isApiAuthRoute = pathname.startsWith(apiAuthPrefix);
+  const isLoginRoute = pathname.startsWith(loginRoute);
+  const isProtectedRoute = ProtectedRoutes.some((route) =>
+    pathname.startsWith(route),
+  );
+
+  if (isApiAuthRoute) {
+    return;
+  }
+  if (isLoginRoute && !isLoggedIn) {
+    return;
+  }
+
+  if (isProtectedRoute && !isLoggedIn) {
+    return Response.redirect(new URL(loginRoute, request.url));
+  }
+
+  if (isAuthRoute && isLoggedIn) {
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, request.url));
+  }
   return;
 });
 

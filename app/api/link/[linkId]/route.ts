@@ -3,7 +3,6 @@ import { db } from "@/lib/db";
 import { decode } from "next-auth/jwt";
 import { changeCustomSuffixSchema } from "@/schemas";
 
-
 export async function GET(
   req: Request,
   { params }: { params: { linkId: string } },
@@ -31,7 +30,7 @@ export async function PATCH(
 ) {
   try {
     let userId;
-    const {linkId} = params
+    const { linkId } = params;
 
     // Check for Bearer token
     const authHeader = request.headers.get("Authorization");
@@ -66,35 +65,40 @@ export async function PATCH(
     const validatedFields = changeCustomSuffixSchema.safeParse(body);
     console.log(validatedFields);
     if (!validatedFields.success) {
-      return Response.json({ error: "Invalid fields" }, { status: 400 });
+      return Response.json({ success:false, message: "Invalid fields" }, { status: 400 });
     }
 
     const { customSuffix } = validatedFields.data;
-   
 
-    const isExisting = !!await db.link.findUnique({
+    const isExisting = !!(await db.link.findUnique({
       where: {
         customSuffix,
       },
-    });
+    }));
 
-    if (isExisting){
-      return Response.json( {success: false, error: "custom suffix in use"}, {status: 409 })
+    if (isExisting) {
+      return Response.json(
+        { success: false, message: "custom suffix in use" },
+        { status: 409 },
+      );
     }
     const data = await db.link.update({
       where: {
         id: linkId,
-        userId
+        userId,
       },
-      data:{
-        customSuffix
-      }
-    })
-    return Response.json({ success: true, data }, { status: 200 });
+      data: {
+        customSuffix,
+      },
+    });
+    return Response.json(
+      { success: true, message: "Custom suffix changed succesfully" },
+      { status: 200 },
+    );
   } catch (error) {
     console.log(error);
     return Response.json(
-      { error: "An unexpected error occurred" },
+      { success: false, message: "An unexpected error occurred" },
       { status: 500 },
     );
   }
