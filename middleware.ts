@@ -16,12 +16,11 @@ export default auth((request) => {
   const { pathname } = request.nextUrl;
 
   const isLoggedIn = !!request.auth;
+  console.log("loggedin?", isLoggedIn);
   const isAuthRoute = authRoutes.includes(pathname);
   const isApiAuthRoute = pathname.startsWith(apiAuthPrefix);
-  const isLoginRoute = pathname.startsWith(loginRoute);
-  const isProtectedRoute = ProtectedRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
+  const isLoginRoute = pathname === loginRoute;;
+  const isProtectedRoute = pathname.startsWith(ProtectedRoutes);
 
   if (isApiAuthRoute) {
     return;
@@ -39,9 +38,3 @@ export default auth((request) => {
   }
   return;
 });
-
-// Optionally, don't invoke Middleware on some paths
-export const config = {
-  // switch to clerk version
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-};

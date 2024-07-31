@@ -1,28 +1,35 @@
-import { LoginSchema } from "@/schemas";
-import { z } from "zod";
-import ky, { HTTPError } from "ky";
+"use server";
+import { loginSchema } from "@/schemas";
+import * as z from "zod";
+import { signIn } from "@/auth";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { AuthError } from "next-auth";
 
-interface ErrorMessage {
-  error?: string;
-}
-
-export const login = async (
-  values: z.infer<typeof LoginSchema>,
-): Promise<ErrorMessage> => {
+export const login = async (values: z.infer<typeof loginSchema>) => {
+  const validatedFields = loginSchema.safeParse(values);
+  if (!validatedFields.success) {
+    return { error: "invalid fields" };
+  }
+  const { email, password } = validatedFields.data;
   try {
-    const data = await ky
-      .post("/api/auth/login", {
-        json: values,
-      })
-      .json();
-
-    return {};
+    const x = await signIn("credentials", {
+      email,
+      password,
+      redirectTo: DEFAULT_LOGIN_REDIRECT,
+    });
+    console.log("x", x);
   } catch (error) {
-    if (error instanceof HTTPError) {
-      // ky throws HTTPError for non-2xx responses
-      const errorData = await error.response.json();
-      return { error: errorData.error || "An error occurred" };
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin": {
+          return { error: "Invalid credentials" };
+        }
+        default:
+          return {
+            error: "something went wrong",
+          };
+      }
     }
-    return { error: "An unexpected error occurred" };
+    throw error;
   }
 };

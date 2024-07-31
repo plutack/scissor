@@ -17,6 +17,8 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { login } from "@/actions/login";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { FormSuccess } from "@/components/form-success";
+import { FormError } from "@/components/form-error";
 
 type LoginFormValue = z.infer<typeof loginSchema>;
 type RegisterFormValue = z.infer<typeof registerSchema>;
@@ -34,17 +36,19 @@ export default function UserAuthForm() {
 
   const registerForm = useForm<RegisterFormValue>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
   const onLoginSubmit = async (values: LoginFormValue) => {
     login(values).then((data) => {
-      // if (data.error) {
-      //   setError(data.error);
-      // }
-      window.location.href = DEFAULT_LOGIN_REDIRECT;
+      if (data && data.error) {
+        setError(data.error);
+      }
+      // window.location.href = DEFAULT_LOGIN_REDIRECT;
     });
   };
+
+  const [error, setError] = useState<string | undefined>("");
 
   const onRegisterSubmit = async (data: RegisterFormValue) => {
     // Implement your register logic here
@@ -99,7 +103,7 @@ export default function UserAuthForm() {
                 </FormItem>
               )}
             />
-
+            <FormError message={error} />
             <Button disabled={loading} className="ml-auto w-full" type="submit">
               Login
             </Button>
@@ -116,7 +120,7 @@ export default function UserAuthForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel> 
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
@@ -165,7 +169,24 @@ export default function UserAuthForm() {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={registerForm.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confim password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password..."
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button disabled={loading} className="ml-auto w-full" type="submit">
               Register
             </Button>
