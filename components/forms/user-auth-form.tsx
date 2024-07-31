@@ -1,4 +1,6 @@
 "use client";
+import { useForm, SubmitHandler } from "react-hook-form";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -12,186 +14,238 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, registerSchema } from "@/schemas";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import React, { ReactNode, useState } from "react";
+
 import { login } from "@/actions/login";
+import { register } from "@/actions/register";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { FormSuccess } from "@/components/form-success";
 import { FormError } from "@/components/form-error";
 
-type LoginFormValue = z.infer<typeof loginSchema>;
-type RegisterFormValue = z.infer<typeof registerSchema>;
+type LoginFormValues = z.infer<typeof loginSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export default function UserAuthForm() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
-  const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+interface LoginFormProps {
+  onSubmit: SubmitHandler<LoginFormValues>;
+  error?: string;
+  loading: boolean;
+}
 
-  const loginForm = useForm<LoginFormValue>({
+interface RegisterFormProps {
+  onSubmit: SubmitHandler<RegisterFormValues>;
+  error?: string;
+  success?: string;
+  loading: boolean;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
+  const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const registerForm = useForm<RegisterFormValue>({
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit as SubmitHandler<LoginFormValues>)}
+        className="w-full space-y-2"
+      >
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="Enter your email..."
+                  disabled={loading}
+                  {...field}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    console.log("Email changed:", e.target.value);
+                    field.onChange(e);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="Enter your password..."
+                  disabled={loading}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {error && <FormError message={error} />}
+        <Button disabled={loading} className="ml-auto w-full" type="submit">
+          Login
+        </Button>
+      </form>
+    </Form>
+  );
+};
+
+const RegisterForm: React.FC<RegisterFormProps> = ({
+  onSubmit,
+  error,
+  success,
+  loading,
+}) => {
+  const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
-  const onLoginSubmit = async (values: LoginFormValue) => {
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(
+          onSubmit as SubmitHandler<RegisterFormValues>,
+        )}
+        className="w-full space-y-2"
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Enter your name..."
+                  disabled={loading}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="Enter your email..."
+                  disabled={loading}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="Enter your password..."
+                  disabled={loading}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confim password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="Enter your password..."
+                  disabled={loading}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {error && <FormError message={error} />}
+        {success && <FormSuccess message={success} />}
+        <Button disabled={loading} className="ml-auto w-full" type="submit">
+          Register
+        </Button>
+      </form>
+    </Form>
+  );
+};
+
+const UserAuthForm: React.FC = (): ReactNode => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
+
+  const onLoginSubmit: SubmitHandler<LoginFormValues> = async (values) => {
+    setLoading(true);
     login(values).then((data) => {
       if (data && data.error) {
         setError(data.error);
       }
+      setLoading(false);
       // window.location.href = DEFAULT_LOGIN_REDIRECT;
     });
   };
 
-  const [error, setError] = useState<string | undefined>("");
-
-  const onRegisterSubmit = async (data: RegisterFormValue) => {
-    // Implement your register logic here
-    console.log("Register data:", data);
+  const onRegisterSubmit: SubmitHandler<RegisterFormValues> = async (
+    values,
+  ) => {
+    setLoading(true);
+    register(values).then((data) => {
+      setError(data.error);
+      setSuccess(data.success);
+    });
+    setLoading(false);
   };
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
+    RegisterForm;
+    setError(undefined);
+    setSuccess(undefined);
   };
 
   return (
     <>
       {isLogin ? (
-        <Form {...loginForm}>
-          <form
-            onSubmit={loginForm.handleSubmit(onLoginSubmit)}
-            className="w-full space-y-2"
-          >
-            <FormField
-              control={loginForm.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="Enter your email..."
-                      disabled={loading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={loginForm.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter your password..."
-                      disabled={loading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormError message={error} />
-            <Button disabled={loading} className="ml-auto w-full" type="submit">
-              Login
-            </Button>
-          </form>
-        </Form>
+        <LoginForm onSubmit={onLoginSubmit} error={error} loading={loading} />
       ) : (
-        <Form {...registerForm}>
-          <form
-            onSubmit={registerForm.handleSubmit(onRegisterSubmit)}
-            className="w-full space-y-2"
-          >
-            <FormField
-              control={registerForm.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Enter your name..."
-                      disabled={loading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={registerForm.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="Enter your email..."
-                      disabled={loading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={registerForm.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter your password..."
-                      disabled={loading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={registerForm.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confim password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter your password..."
-                      disabled={loading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button disabled={loading} className="ml-auto w-full" type="submit">
-              Register
-            </Button>
-          </form>
-        </Form>
+        <RegisterForm
+          onSubmit={onRegisterSubmit}
+          error={error}
+          success={success}
+          loading={loading}
+        />
       )}
       <div className="text-center mt-4">
         <Button variant="link" onClick={toggleForm}>
@@ -202,4 +256,6 @@ export default function UserAuthForm() {
       </div>
     </>
   );
-}
+};
+
+export default UserAuthForm;

@@ -1,4 +1,4 @@
-import { RegisterSchema } from "@/schemas";
+import { registerSchema } from "@/schemas";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
@@ -10,7 +10,7 @@ interface ErrorMessage {
 }
 
 export const register = async (
-  values: z.infer<typeof RegisterSchema>,
+  values: z.infer<typeof registerSchema>,
 ): Promise<ErrorMessage> => {
   try {
     const data = await ky
