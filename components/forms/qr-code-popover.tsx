@@ -12,7 +12,7 @@ type QRCodePopoverProps = {
   onClose: () => void;
 };
 
-// TODO fix downlaod button and close button in pop-over component
+// TODO fix downlaod button and social button links
 export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
   const { toast } = useToast();
   const qrRef = useRef<SVGSVGElement>(null);

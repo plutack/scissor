@@ -26,16 +26,8 @@ export const shortenLinkSchema = z.object({
   customSuffix: z
     .string()
     .min(3, { message: "Custom suffix is too short" })
-    .optional(),
-});
-
-export const shortenLinkSchemaBase = z.object({
-  link: z.string().regex(urlRegex, { message: "Invalid URL" }),
-  customSuffix: z
-    .string()
-    .min(3, { message: "Custom suffix is too short" })
-    .optional(),
-  name: z.string().optional(),
+    .optional()
+    .or(z.literal("")),
 });
 
 export const changeCustomSuffixSchema = z.object({

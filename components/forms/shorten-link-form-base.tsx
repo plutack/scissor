@@ -34,9 +34,9 @@ export function ShortenLinkFormBase({
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
+      name: "",
       link: "",
       customSuffix: "",
-      name: "",
     },
   });
 
@@ -75,6 +75,25 @@ export function ShortenLinkFormBase({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+        {isProtectedRoute && (
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Link name"
+                    disabled={loading}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="link"
@@ -93,42 +112,23 @@ export function ShortenLinkFormBase({
           )}
         />
         {isProtectedRoute && (
-          <>
-            <FormField
-              control={form.control}
-              name="customSuffix"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Custom Suffix (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="my-custom-link"
-                      disabled={loading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Link name"
-                      disabled={loading}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </>
+          <FormField
+            control={form.control}
+            name="customSuffix"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Custom Suffix (Optional)</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="my-custom-link"
+                    disabled={loading}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         )}
         <Button disabled={loading} className="w-full" type="submit">
           Shorten Link
