@@ -1,31 +1,37 @@
-"use client"
-import { useEffect, useState } from 'react';
-import ky from 'ky';
-import NotFound from '@/app/not-found';
+"use client";
+import { useEffect, useState } from "react";
+import ky from "ky";
+import NotFound from "@/app/not-found";
 
-export default function CustomSuffixPage({ params }: { params: { customSuffix: string } }) {
+export default function CustomSuffixPage({
+  params,
+}: {
+  params: { customSuffix: string };
+}) {
   const { customSuffix } = params;
   const [loading, setLoading] = useState(true);
   const [redirecting, setRedirecting] = useState(false);
-  const [redirectUrl, setRedirectUrl] = useState<string>('');
+  const [redirectUrl, setRedirectUrl] = useState<string>("");
 
   useEffect(() => {
     const fetchLink = async () => {
       try {
-        const result: { success: boolean; data: string } = await ky.get(`/api/link/public/${customSuffix}`).json();
+        const result: { success: boolean; data: string } = await ky
+          .get(`/api/link/public/${customSuffix}`)
+          .json();
 
         setRedirecting(true);
-        setRedirectUrl(result.data); 
+        setRedirectUrl(result.data);
 
         setTimeout(() => {
-          
-          const redirectTo = result.data
-
-          window.location.href = redirectTo; 
+          const redirectTo = /^https?:\/\//i.test(result.data)
+            ? result.data
+            : `http://${result.data}`;
+          window.location.href = redirectTo;
         }, 3000);
       } catch (error) {
-        console.error(error); 
-        window.location.href = '/invalid-link';
+        console.error(error);
+        window.location.href = "/invalid-link";
       } finally {
         setLoading(false);
       }
@@ -37,7 +43,9 @@ export default function CustomSuffixPage({ params }: { params: { customSuffix: s
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-2xl font-semibold text-center">Loading, please wait...</p>
+        <p className="text-2xl font-semibold text-center">
+          Loading, please wait...
+        </p>
       </div>
     ); // Show a loading state while fetching
   }
