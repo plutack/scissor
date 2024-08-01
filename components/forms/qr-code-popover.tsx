@@ -71,20 +71,16 @@ export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
   };
 
   return (
-    <div className="fixed z-20 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="fixed  inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Your Short Link</h2>
-          <Button variant="ghost" size="sm" onClick={onClose}>
+          <Button variant="default" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
         <div className="flex items-center space-x-2 mb-4">
-          <Input
-            value={shortUrl}
-            readOnly
-            // Add this line to ensure text is visible
-          />
+          <Input value={shortUrl} readOnly className="text-orange-900" />
           <Button size="sm" onClick={copyToClipboard}>
             <Copy className="h-4 w-4" />
           </Button>
