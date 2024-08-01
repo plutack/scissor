@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { findUserByEmail } from "@/data/user";
 
-// TODO : implement response type in the future
 export async function POST(request: Request) {
   const body = await request.json();
   const validatedFields = registerSchema.safeParse(body);
@@ -31,5 +30,8 @@ export async function POST(request: Request) {
       password: hashedPassword,
     },
   });
-  return Response.json({ success:true, message:"Verification email sent" }, { status: 201 });
+  return Response.json(
+    { success: true, message: "Verification email sent" },
+    { status: 201 },
+  );
 }
