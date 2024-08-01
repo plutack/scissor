@@ -21,11 +21,21 @@ export const registerSchema = z
   });
 
 export const shortenLinkSchema = z.object({
+  name: z.string().max(10, { message: "Name is too long" }).optional(),
   link: z.string().regex(urlRegex, { message: "Invalid URL" }),
   customSuffix: z
     .string()
     .min(3, { message: "Custom suffix is too short" })
     .optional(),
+});
+
+export const shortenLinkSchemaBase = z.object({
+  link: z.string().regex(urlRegex, { message: "Invalid URL" }),
+  customSuffix: z
+    .string()
+    .min(3, { message: "Custom suffix is too short" })
+    .optional(),
+  name: z.string().optional(),
 });
 
 export const changeCustomSuffixSchema = z.object({

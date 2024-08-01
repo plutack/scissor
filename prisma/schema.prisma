@@ -51,6 +51,7 @@ model Account {
 
 model Link {
   id           String   @id @default(cuid())
+  name         String?
   userId       String?  @map("user_id")
   link         String
   customSuffix String   @unique

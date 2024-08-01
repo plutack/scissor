@@ -62,10 +62,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
                   placeholder="Enter your email..."
                   disabled={loading}
                   {...field}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    console.log("Email changed:", e.target.value);
-                    field.onChange(e);
-                  }}
                 />
               </FormControl>
               <FormMessage />

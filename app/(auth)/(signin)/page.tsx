@@ -3,7 +3,7 @@ import Link from "next/link";
 import UserAuthForm from "@/components/forms/user-auth-form";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ShortenLinkForm } from "@/components/forms/shorten-link-form";
+import { HomeShortenLinkForm } from "@/components/forms/home-shorten-link-form";
 
 export const metadata: Metadata = {
   title: "Authentication",
@@ -39,8 +39,8 @@ export default function AuthenticationPage() {
           </svg>
           Logo
         </div>
-        <div className="relative z-10">
-          <ShortenLinkForm />
+        <div className="relative z-5">
+          <HomeShortenLinkForm  />
         </div>
         <div className="relative z-20 mt-auto bg">
           <blockquote className="space-y-2">
