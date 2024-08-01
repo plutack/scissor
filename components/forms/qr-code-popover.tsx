@@ -5,13 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Copy, Download, X, Twitter, Facebook, Share2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
 
 type QRCodePopoverProps = {
   shortUrl: string;
   onClose: () => void;
 };
-
 
 // TODO fix downlaod button and close button in pop-over component
 export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
@@ -34,8 +33,6 @@ export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
     }
   };
 
-  
-
   const downloadQRCode = () => {
     if (qrRef.current) {
       const svg = qrRef.current;
@@ -49,38 +46,44 @@ export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
         ctx?.drawImage(img, 0, 0);
         canvas.toBlob((blob) => {
           if (blob) {
-            console.log(blob)
+            console.log(blob);
             saveAs(blob, "qrcode.png");
           }
         });
       };
-      img.src = "data:image/svg+xml;base64," + btoa(decodeURIComponent(encodeURIComponent(svgData)));
+      img.src =
+        "data:image/svg+xml;base64," +
+        btoa(decodeURIComponent(encodeURIComponent(svgData)));
     }
   };
 
   const shareToSocial = (platform: "twitter" | "facebook" | "reddit") => {
     const urls = {
-      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shortUrl)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shortUrl)}`,
+      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+        shortUrl,
+      )}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shortUrl,
+      )}`,
       reddit: `https://reddit.com/submit?url=${encodeURIComponent(shortUrl)}`,
     };
     window.open(urls[platform], "_blank");
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="fixed z-20 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Your Short Link</h2>
-          <Button variant="default" size="sm" onClick={onClose}>
+          <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
         <div className="flex items-center space-x-2 mb-4">
-          <Input 
-            value={shortUrl} 
-            readOnly 
-            className="text-gray-800" // Add this line to ensure text is visible
+          <Input
+            value={shortUrl}
+            readOnly
+            // Add this line to ensure text is visible
           />
           <Button size="sm" onClick={copyToClipboard}>
             <Copy className="h-4 w-4" />
