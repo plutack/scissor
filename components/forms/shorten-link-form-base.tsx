@@ -36,7 +36,7 @@ export function ShortenLinkFormBase({
     defaultValues: {
       name: "",
       link: "",
-      customSuffix: "",
+      customSuffix: undefined,
     },
   });
 

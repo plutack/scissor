@@ -27,7 +27,7 @@ export const shortenLinkSchema = z.object({
     .string()
     .min(3, { message: "Custom suffix is too short" })
     .optional()
-    .or(z.literal("")),
+    .or(z.undefined()),
 });
 
 export const changeCustomSuffixSchema = z.object({
