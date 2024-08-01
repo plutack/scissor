@@ -7,6 +7,8 @@ import { Copy, Download, X, Twitter, Facebook, Share2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { saveAs } from "file-saver";
 
+// TODO immport twitter new icon
+
 type QRCodePopoverProps = {
   shortUrl: string;
   onClose: () => void;
@@ -59,9 +61,7 @@ export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
 
   const shareToSocial = (platform: "twitter" | "facebook" | "reddit") => {
     const urls = {
-      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-        shortUrl,
-      )}`,
+      twitter: `https://x.com/intent/tweet?url=${encodeURIComponent(shortUrl)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
         shortUrl,
       )}`,
