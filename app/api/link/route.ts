@@ -5,32 +5,64 @@ import { shortenLinkSchema } from "@/schemas";
 import { generateUniqueLink } from "@/utils/create";
 import { decode } from "next-auth/jwt";
 
-export async function GET(req: Request) {
-  const session = await auth();
-  const url = new URL(req.url);
+export async function GET(request: Request) {
+  let userId;
+
+  // Check for Bearer token
+  const authHeader = request.headers.get("Authorization");
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.split(" ")[1];
+    try {
+      const decodedToken = await decode({
+        token,
+        secret: process.env.AUTH_SECRET!,
+        salt: "authjs.session-token",
+      });
+      if (decodedToken) {
+        userId = decodedToken.sub;
+      }
+    } catch (error) {
+      console.error("Token verification failed:", error);
+    }
+  }
+
+  // If no valid Bearer token, fall back to session
+  if (!userId) {
+    const session = await auth();
+    userId = session?.user?.id;
+  }
+
+  if (!userId) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const url = new URL(request.url);
 
   // Parse pagination parameters from query string
-  const page = parseInt(url.searchParams.get("page") || "1", 10);
-  const limit = parseInt(url.searchParams.get("limit") || "10", 10);
+  const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10));
+  const limit = Math.min(
+    25,
+    Math.max(1, parseInt(url.searchParams.get("limit") || "10", 10)),
+  );
+  const name = url.searchParams.get("name") || "";
 
-  // Reset page and limit if negative or zero
-  const validPage = page > 0 ? page : 1;
-  const validLimit = limit > 0 && limit <= 25 ? limit : 10;
+  const skip = (page - 1) * limit;
 
-  const skip = (validPage - 1) * validLimit;
+  // Prepare the where clause
+  const whereClause: any = { userId };
+  if (name) {
+    whereClause.name = {
+      contains: name,
+      mode: "insensitive", // Case-insensitive search
+    };
+  }
 
   try {
-    // Fetch paginated links
-    if (!session) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    // Fetch paginated links with optional name filter
     const links = await db.link.findMany({
-      where: {
-        userId: session.user.id,
-      },
+      where: whereClause,
       skip: skip,
-      take: validLimit,
+      take: limit,
       orderBy: {
         createdAt: "desc",
       },
@@ -38,19 +70,17 @@ export async function GET(req: Request) {
 
     // Count total number of links for pagination metadata
     const totalLinks = await db.link.count({
-      where: {
-        userId: session?.user.id,
-      },
+      where: whereClause,
     });
 
-    const totalPages = Math.ceil(totalLinks / validLimit);
+    const totalPages = Math.ceil(totalLinks / limit);
 
     return Response.json({
       success: true,
       data: links,
       pagination: {
-        page: validPage,
-        limit: validLimit,
+        page,
+        limit,
         totalLinks,
         totalPages,
       },
@@ -101,21 +131,9 @@ export async function POST(request: Request) {
     const { link } = validatedFields.data;
     const customSuffix = await generateUniqueLink(validatedFields.data);
 
-    const isExisting = !!(await db.link.findUnique({
-      where: {
-        customSuffix,
-      },
-    }));
-
-    if (isExisting) {
-      return Response.json(
-        { success: false, error: "custom suffix in use" },
-        { status: 409 },
-      );
-    }
-
     const data = await db.link.create({
       data: {
+        name: validatedFields.data.name,
         link,
         customSuffix,
         userId,
@@ -125,7 +143,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, data });
   } catch (error) {
     console.log(error);
-    if (error instanceof Error) console.log("error", error.message);
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
     return NextResponse.json(
       { error: "An unexpected error occurred" },
       { status: 500 },

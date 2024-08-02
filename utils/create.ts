@@ -6,16 +6,20 @@ export const generateUniqueLink = async ({
   link,
   customSuffix,
 }: z.infer<typeof shortenLinkSchema>): Promise<string> => {
+  let isUnique: boolean = false;
   if (customSuffix) {
+    isUnique = !(await db.link.findFirst({ where: { customSuffix } }));
+    if (!isUnique) {
+      throw new Error("Custom suffix already exists");
+    }
     return `${customSuffix}`;
   }
 
   let suffix: string = "";
   console.log("Generating unique link");
-  let isUnique: boolean = false;
 
   while (!isUnique) {
-    suffix = ""; 
+    suffix = "";
     const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     for (let i = 0; i < 5; i++) {
