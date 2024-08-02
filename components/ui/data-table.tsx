@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  useReactTable
-} from '@tanstack/react-table';
+  useReactTable,
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -14,28 +14,39 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from '@/components/ui/table';
-import { Input } from './input';
-import { Button } from './button';
-import { ScrollArea, ScrollBar } from './scroll-area';
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "./input";
+import { Button } from "./button";
+import { ScrollArea, ScrollBar } from "./scroll-area";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey: string;
+  pagination: {
+    page: number;
+    limit: number;
+    totalLinks: number;
+    totalPages: number;
+  };
+  onNextPage: () => void;
+  onPreviousPage: () => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  searchKey
+  searchKey,
+  pagination,
+  onNextPage,
+  onPreviousPage,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel()
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   /* this can be used to get the selectedrows 
@@ -45,7 +56,7 @@ export function DataTable<TData, TValue>({
     <>
       <Input
         placeholder={`Search ${searchKey}...`}
-        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
+        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
         onChange={(event) =>
           table.getColumn(searchKey)?.setFilterValue(event.target.value)
         }
@@ -63,7 +74,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -76,13 +87,13 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
+                  data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -104,23 +115,22 @@ export function DataTable<TData, TValue>({
       </ScrollArea>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          Showing {(pagination.page - 1) * pagination.limit + 1} to {Math.min(pagination.page * pagination.limit, pagination.totalLinks)} of {pagination.totalLinks} results
         </div>
         <div className="space-x-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={onPreviousPage}
+            disabled={pagination.page === 1}
           >
             Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={onNextPage}
+            disabled={pagination.page === pagination.totalPages}
           >
             Next
           </Button>

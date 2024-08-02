@@ -18,9 +18,22 @@ interface Link {
 
 interface LinkProps {
   data: Link[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalLinks: number;
+    totalPages: number;
+  };
+  onNextPage: () => void;
+  onPreviousPage: () => void;
 }
 
-export const LinkClient: React.FC<LinkProps> = ({ data }) => {
+export const LinkClient: React.FC<LinkProps> = ({
+  data,
+  pagination,
+  onNextPage,
+  onPreviousPage,
+}) => {
   const router = useRouter();
 
   return (
@@ -30,7 +43,14 @@ export const LinkClient: React.FC<LinkProps> = ({ data }) => {
         <ShortenLinkButton />
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
+      <DataTable
+        searchKey="name"
+        columns={columns}
+        data={data}
+        pagination={pagination}
+        onNextPage={onNextPage}
+        onPreviousPage={onPreviousPage}
+      />
     </>
   );
 };

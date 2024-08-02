@@ -71,7 +71,7 @@ export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
   };
 
   return (
-    <div className="fixed  inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="fixed z-20 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Your Short Link</h2>
