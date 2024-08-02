@@ -49,11 +49,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   callbacks: {
     jwt({ token, user }) {
       if (user) {
-        // User is available during sign-in
-        console.log(user);
-        token.userToken = user.accessToken;
-
-        console.log("token1", token);
+        token.role = user.role;
+        // TODO: expose more info from the token during the sign-in
       }
       return token;
     },
@@ -63,6 +60,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       if (token.sub) {
         session.user.id = token.sub;
         session.user.role = token.role;
+
+        // TODO: get more info from the token during the sign-in
       }
       const { id, ...restOfUser } = session.user;
       session.user = { id, ...restOfUser };

@@ -1,28 +1,27 @@
-'use client';
-import { AlertModal } from '@/components/modal/alert-modal';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+"use client";
+import { AlertModal } from "@/components/modal/alert-modal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Link } from '@/constants/data';
-import { Edit, MoreHorizontal, Trash, Check, X } from 'lucide-react';
-import { useState } from 'react';
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Link } from "@/constants/data";
+import { Edit, MoreHorizontal, Trash, Check, X } from "lucide-react";
+import { useState } from "react";
 
 interface CellActionProps {
   data: Link;
-  onUpdate: (name: string, newValue: string) => void;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data, onUpdate }) => {
+export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedValue, setEditedValue] = useState(data.link); // Assuming we're editing the name
+  const [editedValue, setEditedValue] = useState(data.name); // Assuming we're editing the name
 
   const onConfirm = async () => {
     // Delete logic here
@@ -32,8 +31,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data, onUpdate }) => {
     setIsEditing(true);
   };
 
+  const onUpdate = (name: string, newValue: string) => {
+    console.log(name, newValue);
+  };
+
   const handleSave = () => {
-    onUpdate(data.customSuffix, editedValue);
+    onUpdate(data.name, editedValue);
+    console.log(data.name, editedValue);
     setIsEditing(false);
   };
 

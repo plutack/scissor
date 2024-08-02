@@ -1,43 +1,33 @@
-'use client';
-import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
-import { Link } from '@/constants/data';
-import { Checkbox } from '@/components/ui/checkbox';
+// In your columns.ts file
+import { ColumnDef } from "@tanstack/react-table";
+import { CellAction } from "@/components/tables/user-tables/cell-action";
+
+export type Link = {
+  name: string;
+  link: string;
+  customSuffix: string;
+  clicks: number;
+};
 
 export const columns: ColumnDef<Link>[] = [
   {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false
+    accessorKey: "name",
+    header: "Name",
   },
   {
-    accessorKey: 'link',
-    header: 'LINK'
+    accessorKey: "link",
+    header: "Link",
   },
   {
-    accessorKey: 'customSuffix',
-    header: 'CUSTOM SUFFIX'
+    accessorKey: "customSuffix",
+    header: "Custom Suffix",
   },
   {
-    accessorKey: 'clickCount',
-    header: 'CLICK COUNT'
+    accessorKey: "clicks",
+    header: "Clicks",
   },
   {
-    id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} onUpdate={()=>{}} />
-  }
+    id: "actions",
+    cell: ({ row }) => <CellAction data={row.original} />,
+  },
 ];

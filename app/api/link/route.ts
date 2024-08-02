@@ -29,6 +29,7 @@ export async function GET(request: Request) {
   // If no valid Bearer token, fall back to session
   if (!userId) {
     const session = await auth();
+    console.log("session", session);
     userId = session?.user?.id;
   }
 

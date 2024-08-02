@@ -39,6 +39,8 @@ const chartConfig = {
   }
 } satisfies ChartConfig;
 
+
+// TODO: reconfigure the chart to use the data from the API
 export function BarGraph() {
   const [chartData, setChartData] = React.useState(placeholderData);
   const [loading, setLoading] = React.useState(true);
