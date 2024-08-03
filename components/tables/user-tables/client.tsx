@@ -35,6 +35,10 @@ export const LinkClient: React.FC<LinkProps> = ({
   onPreviousPage,
 }) => {
   const router = useRouter();
+  const handleRowClick = (row: Link) => {
+    // TODO Navigate to the link details page or perform any action
+    router.push(`/dashboard/link/${row.customSuffix}`);
+  };
 
   return (
     <>
@@ -50,6 +54,7 @@ export const LinkClient: React.FC<LinkProps> = ({
         pagination={pagination}
         onNextPage={onNextPage}
         onPreviousPage={onPreviousPage}
+        onRowClick={handleRowClick}
       />
     </>
   );

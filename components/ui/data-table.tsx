@@ -32,7 +32,9 @@ interface DataTableProps<TData, TValue> {
   };
   onNextPage: () => void;
   onPreviousPage: () => void;
+  onRowClick?: (row: TData) => void;
 }
+const renderDashForNull = (value: any) => value ?? "-";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -41,6 +43,7 @@ export function DataTable<TData, TValue>({
   pagination,
   onNextPage,
   onPreviousPage,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -69,7 +72,7 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -88,12 +91,18 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className={
+                    onRowClick ? "cursor-pointer hover:bg-gray-100" : ""
+                  }
+                  onClick={() => onRowClick && onRowClick(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
+                    <TableCell key={cell.id} className="text-center">
+                      {renderDashForNull(
+                        flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        ),
                       )}
                     </TableCell>
                   ))}
@@ -115,7 +124,9 @@ export function DataTable<TData, TValue>({
       </ScrollArea>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          Showing {(pagination.page - 1) * pagination.limit + 1} to {Math.min(pagination.page * pagination.limit, pagination.totalLinks)} of {pagination.totalLinks} results
+          Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
+          {Math.min(pagination.page * pagination.limit, pagination.totalLinks)}{" "}
+          of {pagination.totalLinks} results
         </div>
         <div className="space-x-2">
           <Button
