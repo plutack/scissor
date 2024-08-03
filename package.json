@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "start:migrate": "prisma migrate deploy && next start"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.1",
