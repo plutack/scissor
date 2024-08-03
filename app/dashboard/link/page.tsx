@@ -37,7 +37,7 @@ export default function Page() {
       setPage(page - 1);
     }
   };
-
+// TODO change to lucide spinner
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error fetching links</div>;
 

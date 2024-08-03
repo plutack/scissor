@@ -60,7 +60,7 @@ export function BarGraph() {
 
     fetchData();
   }, []);
-
+// TODO change to lucide spinner
   if (loading) {
     return <div>Loading...</div>;
   }
