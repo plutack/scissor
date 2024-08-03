@@ -6,9 +6,11 @@ import React from 'react';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'User', link: '/dashboard/user' },
-  { title: 'Create', link: '/dashboard/user/create' }
+  { title: 'Link', link: '/dashboard/link' },
+  { title: 'Link details', link: '/dashboard/link/link-details' }
 ];
+
+// TODO: Add the logic to fetch the link details based on the customSuffix
 export default function Page() {
   return (
     <PageContainer scrollable={true}>
