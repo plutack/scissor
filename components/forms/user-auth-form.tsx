@@ -207,9 +207,11 @@ const UserAuthForm: React.FC = (): ReactNode => {
     login(values).then((data) => {
       if (data && data.error) {
         setError(data.error);
+        setLoading(false);
+        return;
       }
+      window.location.href = DEFAULT_LOGIN_REDIRECT;
       setLoading(false);
-      // window.location.href = DEFAULT_LOGIN_REDIRECT;
     });
   };
 
