@@ -34,7 +34,7 @@ export function ShortenLinkFormBase({
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
+      name: undefined,
       link: "",
       customSuffix: undefined,
     },
@@ -81,7 +81,7 @@ export function ShortenLinkFormBase({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Name (Optional)</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Link name"

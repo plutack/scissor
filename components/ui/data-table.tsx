@@ -34,7 +34,6 @@ interface DataTableProps<TData, TValue> {
   onPreviousPage: () => void;
   onRowClick?: (row: TData) => void;
 }
-const renderDashForNull = (value: any) => value ?? "-";
 
 export function DataTable<TData, TValue>({
   columns,
@@ -98,11 +97,9 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="text-center">
-                      {renderDashForNull(
-                        flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        ),
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
