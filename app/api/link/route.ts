@@ -126,7 +126,7 @@ export async function POST(request: Request) {
     const validatedFields = shortenLinkSchema.safeParse(body);
     console.log(validatedFields);
     if (!validatedFields.success) {
-      return NextResponse.json({ error: "Invalid fields" }, { status: 400 });
+      return Response.json({ error: "Invalid fields" }, { status: 400 });
     }
 
     const { link } = validatedFields.data;
@@ -141,13 +141,13 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ success: true, data });
+    return Response.json({ success: true, data });
   } catch (error) {
     console.log(error);
     if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return Response.json({ error: error.message }, { status: 500 });
     }
-    return NextResponse.json(
+    return Response.json(
       { error: "An unexpected error occurred" },
       { status: 500 },
     );

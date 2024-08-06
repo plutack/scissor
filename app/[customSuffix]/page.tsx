@@ -1,34 +1,46 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ky from "ky";
-import NotFound from "@/app/not-found";
 
-export default function CustomSuffixPage({
-  params,
-}: {
-  params: { customSuffix: string };
-}) {
-  const { customSuffix } = params;
+// Custom hook for managing the link redirection logic
+function useLinkRedirect(customSuffix: string) {
   const [loading, setLoading] = useState(true);
   const [redirecting, setRedirecting] = useState(false);
   const [redirectUrl, setRedirectUrl] = useState<string>("");
+  const apiCalledRef = useRef(false);
 
   useEffect(() => {
-    const fetchLink = async () => {
+    const fetchLinkAndTrackClick = async () => {
+      if (apiCalledRef.current) return;
+      apiCalledRef.current = true;
+
       try {
+        // Fetch the link
         const result: { success: boolean; data: string } = await ky
           .get(`/api/link/public/${customSuffix}`)
           .json();
-
-        setRedirecting(true);
+        console.log("result", result);
         setRedirectUrl(result.data);
+        setRedirecting(true);
 
+        // Track the click
+        const country = await fetchCountry();
+        await ky.patch("/api/link/click", {
+          json: {
+            customSuffix,
+            country,
+          },
+        });
+
+        // Prepare the redirect URL
+        const redirectTo = /^https?:\/\//i.test(result.data)
+          ? result.data
+          : `http://${result.data}`;
+
+        // Set a timeout to allow for a brief display of the redirecting message
         setTimeout(() => {
-          const redirectTo = /^https?:\/\//i.test(result.data)
-            ? result.data
-            : `http://${result.data}`;
           window.location.href = redirectTo;
-        }, 3000);
+        }, 2000);
       } catch (error) {
         console.error(error);
         window.location.href = "/invalid-link";
@@ -37,8 +49,32 @@ export default function CustomSuffixPage({
       }
     };
 
-    fetchLink();
+    fetchLinkAndTrackClick();
   }, [customSuffix]);
+
+  return { loading, redirecting, redirectUrl };
+}
+
+// Helper function to fetch the user's country
+const fetchCountry = async (): Promise<string> => {
+  try {
+    const response: { country_name: string } = await ky
+      .get("https://ipapi.co/json/")
+      .json();
+    return response.country_name;
+  } catch (error) {
+    console.error("Error fetching country:", error);
+    return "Unknown";
+  }
+};
+
+export default function CustomSuffixPage({
+  params,
+}: {
+  params: { customSuffix: string };
+}) {
+  const { customSuffix } = params;
+  const { loading, redirecting, redirectUrl } = useLinkRedirect(customSuffix);
 
   if (loading) {
     return (
@@ -47,7 +83,7 @@ export default function CustomSuffixPage({
           Loading, please wait...
         </p>
       </div>
-    ); // Show a loading state while fetching
+    );
   }
 
   if (redirecting) {
@@ -58,5 +94,5 @@ export default function CustomSuffixPage({
     );
   }
 
-  return null; // The component doesn't render anything
+  return null;
 }

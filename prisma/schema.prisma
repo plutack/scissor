@@ -21,8 +21,8 @@ model User {
   password           String?
   role               userRole  @default(USER)
   image              String?
-  linkCount          Int       @default(0)
-  uniqueCountryCount Int       @default(0)
+  totalClicks        Int       @default(0) @map("total_clicks")
+  uniqueCountryCount Int       @default(0) @map("unique_country_count")
   accounts           Account[]
   links              Link[]
 
@@ -54,7 +54,7 @@ model Link {
   name         String?
   userId       String?  @map("user_id")
   link         String
-  customSuffix String   @unique
+  customSuffix String   @unique @map("custom_suffix")
   clicks       Int      @default(0)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -65,14 +65,11 @@ model Link {
 }
 
 model Visit {
-  id        String   @id @default(cuid())
-  linkId    String
-  country   String
-  count     Int      @default(0)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  linkId  String @map("link_id")
+  country String
+  count   Int    @default(0)
+  link    Link   @relation(fields: [linkId], references: [id], onDelete: Cascade)
 
-  @@unique([linkId, country])
+  @@id([linkId, country])
   @@map("visits")
 }
