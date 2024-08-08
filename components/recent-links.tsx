@@ -36,55 +36,41 @@ export function RecentLinks() {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-[280px]">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-[280px]">
-          <div>An error occurred: {error.message}</div>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center">
+        An error occurred: {error.message}
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Links</CardTitle>
-        <CardDescription>
-          Your most recently created short links
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {data &&
-            data.map((item) => (
-              <div key={item.id} className="flex items-center space-x-4">
-                <Link1Icon className="h-6 w-6" />
-                <div className="flex-1 min-w-0">
-                  <Link
-                    href={`/${item.customSuffix}`}
-                    target="_blank"
-                    className="text-sm font-medium truncate block hover:underline"
-                  >
-                    {`${process.env.NEXT_PUBLIC_BASE_URL}/${item.customSuffix}`}
-                  </Link>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {item.link}
-                  </p>
-                </div>
-                <ArrowRightIcon className="h-4 w-4" />
-              </div>
-            ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      {data &&
+        data.map((item) => (
+          <div key={item.id} className="flex items-center space-x-4">
+            <Link1Icon className="h-6 w-6" />
+            <div className="flex-1 min-w-0">
+              <Link
+                href={`/${item.customSuffix}`}
+                target="_blank"
+                className="text-sm font-medium truncate block hover:underline"
+              >
+                {`${process.env.NEXT_PUBLIC_BASE_URL}/${item.customSuffix}`}
+              </Link>
+              <p className="text-sm text-muted-foreground truncate">
+                {item.link}
+              </p>
+            </div>
+            <ArrowRightIcon className="h-4 w-4" />
+          </div>
+        ))}
+    </div>
   );
 }

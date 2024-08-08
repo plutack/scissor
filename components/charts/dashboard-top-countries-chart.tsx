@@ -4,8 +4,6 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Loader2 } from "lucide-react";
-import { getSession } from "next-auth/react";
-import { Session } from "next-auth";
 
 import {
   Card,
@@ -33,8 +31,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const fetchTopCountries = async (userId: string): Promise<TopCountry[]> => {
-  const response = await fetch(`/api/link/top-countries?userId=${userId}`);
+const fetchTopCountries = async (): Promise<TopCountry[]> => {
+  const response = await fetch("/api/link/top-countries");
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
@@ -42,22 +40,9 @@ const fetchTopCountries = async (userId: string): Promise<TopCountry[]> => {
 };
 
 export function DashboardTopCountriesChart() {
-  const [userId, setUserId] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    async function fetchSession() {
-      const session: Session | null = await getSession();
-      if (session && session.user.id) {
-        setUserId(session.user.id); // Adjust according to your session structure
-      }
-    }
-    fetchSession();
-  }, []);
-
   const { data, isLoading, error } = useQuery<TopCountry[], Error>({
-    queryKey: ["topCountries", userId],
-    queryFn: () => fetchTopCountries(userId as string),
-    enabled: !!userId, // Only run the query if userId is set
+    queryKey: ["topCountries"],
+    queryFn: fetchTopCountries,
   });
 
   if (isLoading) {
