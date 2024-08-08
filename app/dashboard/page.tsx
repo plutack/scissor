@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from "@/auth";
+import { Link2Icon, MousePointerClickIcon, FlagIcon } from "lucide-react";
 
 export default async function page() {
   const session = await auth();
@@ -44,21 +45,12 @@ export default async function page() {
                   <CardTitle className="text-sm font-medium">
                     Total Clicks
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
+                  <MousePointerClickIcon className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">20</div>
+                  <div className="text-2xl font-bold">
+                    {session?.user.totalClicks}
+                  </div>
                   {/* <p className="text-xs text-muted-foreground">
                   </p> */}
                 </CardContent>
@@ -68,23 +60,12 @@ export default async function page() {
                   <CardTitle className="text-sm font-medium">
                     Total Links Created
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
+                  <Link2Icon className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">78</div>
+                  <div className="text-2xl font-bold">
+                    {session?.user.totalLinksCount}
+                  </div>
                   {/* <p className="text-xs text-muted-foreground">
                     +180.1% from last month
                   </p> */}
@@ -95,25 +76,15 @@ export default async function page() {
                   <CardTitle className="text-sm font-medium">
                     Total Unique Countries
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <rect width="20" height="14" x="2" y="5" rx="2" />
-                    <path d="M2 10h20" />
-                  </svg>
+                  <FlagIcon className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">65</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-2xl font-bold">
+                    {session?.user.uniqueCountryCount}
+                  </div>
+                  {/* <p className="text-xs text-muted-foreground">
                     +19% from last month
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
             </div>

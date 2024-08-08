@@ -8,37 +8,27 @@ import { userRole } from "@prisma/client";
 import { encode } from "next-auth/jwt";
 
 declare module "next-auth" {
-  /**
-   * The shape of the user object returned in the OAuth providers' `profile` callback,
-   * or the second parameter of the `session` callback, when using a database.
-   */
   interface User {
     id?: string;
     role?: userRole;
     accessToken?: string;
+    totalClicks?: number;
+    uniqueCountryCount?: number;
+    totalLinksCount?: number;
   }
-  /**
-   * The shape of the account object returned in the OAuth providers' `account` callback,
-   * Usually contains information about the provider being used, like OAuth tokens (`access_token`, etc).
-   */
-  interface Account {}
 
-  /**
-   * Returned by `useSession`, `auth`, contains information about the active session.
-   */
   interface Session {
     user: User;
   }
 }
 
 declare module "next-auth/jwt" {
-  /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
   interface JWT {
-    /** OpenID ID Token */
-    // idToken?: string;
-    /** User role */
     id: string;
     role?: userRole;
+    totalClicks?: number;
+    uniqueCountryCount?: number;
+    totalLinksCount?: number;
   }
 }
 
@@ -47,25 +37,32 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   ...authConfig,
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
+        const userWithLinks = await db.user.findUnique({
+          where: { id: user.id },
+          include: { links: true },
+        });
         token.role = user.role;
-        // TODO: expose more info from the token during the sign-in
+        token.totalClicks = user.totalClicks;
+        token.uniqueCountryCount = user.uniqueCountryCount;
+        token.totalLinksCount = userWithLinks?.links.length || 0;
       }
       return token;
     },
 
-    session({ session, token }) {
-      console.log("token2", token);
+    async session({ session, token, user }) {
       if (token.sub) {
         session.user.id = token.sub;
         session.user.role = token.role;
-
-        // TODO: get more info from the token during the sign-in
+        session.user.totalClicks = token.totalClicks;
+        session.user.uniqueCountryCount = token.uniqueCountryCount; 
+        session.user.totalLinksCount = token.totalLinksCount;
+        console.log(session.user.totalLinksCount);
       }
+      
       const { id, ...restOfUser } = session.user;
       session.user = { id, ...restOfUser };
-      console.log("session", session);
       return session;
     },
   },
