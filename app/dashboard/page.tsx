@@ -18,6 +18,8 @@ import { Link2Icon, MousePointerClickIcon, FlagIcon } from "lucide-react";
 
 export default async function page() {
   const session = await auth();
+
+  // TODO: get data from api not from session
   console.log(session);
   return (
     <PageContainer scrollable={true}>
