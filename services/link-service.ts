@@ -1,7 +1,8 @@
 import ErrorWithStatus from "@/Exception/custom-error";
 import { db } from "@/lib/db";
-import { shortenLinkSchema } from "@/schemas";
+import { shortenLinkSchema, changeCustomSuffixSchema } from "@/schemas";
 import { z } from "zod";
+import isCustomSuffixInUse from "@/utils/check-custom-suffix";
 
 export const getAllLinks = async (url: URL, userId: string) => {
   // Parse pagination parameters from query string
@@ -76,4 +77,52 @@ export const createLink = async (
   } catch (error) {
     throw new ErrorWithStatus("Failed to create link", 500);
   }
+};
+
+export const getLink = async (linkId: string, userId: string | undefined) => {
+  try {
+    const link = await db.link.findUnique({
+      where: {
+        id: linkId,
+        OR: [{ userId }, { userId: null }],
+      },
+    });
+    if (!link) {
+      throw new ErrorWithStatus("Link not found", 404);
+    }
+    return link;
+  } catch (error) {
+    throw new ErrorWithStatus("Failed to fetch link", 500);
+  }
+};
+
+export const getLinkByCustomSuffix = async (customSuffix: string) =>
+  await db.link.findUnique({
+    where: {
+      customSuffix,
+    },
+  });
+
+export const updateLink = async (
+  linkId: string,
+  userId: string,
+  body: z.infer<typeof changeCustomSuffixSchema>,
+) => {
+  const { customSuffix } = body;
+
+  const isExisting = await isCustomSuffixInUse(customSuffix);
+
+  if (isExisting) {
+    throw new ErrorWithStatus("custom suffix in use", 409);
+  }
+
+  await db.link.update({
+    where: {
+      id: linkId,
+      userId,
+    },
+    data: {
+      customSuffix,
+    },
+  });
 };
