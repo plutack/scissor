@@ -1,16 +1,17 @@
 import { z } from "zod";
 import { shortenLinkSchema } from "@/schemas";
-import { db } from "@/lib/db";
+import isCustomSuffixInUse from "@/utils/check-custom-suffix";
+import ErrorWithStatus from "@/Exception/custom-error";
 
-export const generateUniqueLink = async ({
+const generateUniqueLink = async ({
   link,
   customSuffix,
 }: z.infer<typeof shortenLinkSchema>): Promise<string> => {
-  let isUnique: boolean = false;
+  let isUnique: boolean = true;
   if (customSuffix) {
-    isUnique = !(await db.link.findFirst({ where: { customSuffix } }));
-    if (!isUnique) {
-      throw new Error("Custom suffix already exists");
+    isUnique = await isCustomSuffixInUse(customSuffix);
+    if (isUnique) {
+      throw new ErrorWithStatus("Custom suffix already in use", 400);
     }
     return `${customSuffix}`;
   }
@@ -18,7 +19,7 @@ export const generateUniqueLink = async ({
   let suffix: string = "";
   console.log("Generating unique link");
 
-  while (!isUnique) {
+  while (isUnique) {
     suffix = "";
     const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -27,8 +28,9 @@ export const generateUniqueLink = async ({
         Math.floor(Math.random() * characters.length),
       );
     }
-    isUnique = !(await db.link.findFirst({ where: { customSuffix: suffix } }));
+    isUnique = await isCustomSuffixInUse(suffix);
   }
-
   return suffix;
 };
+
+export default generateUniqueLink;

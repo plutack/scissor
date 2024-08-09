@@ -1,7 +1,7 @@
 import { validateWithSchema } from "@/validation/validate-request";
 import { getUserIdFromRequest } from "@/utils/auth";
 import { shortenLinkSchema } from "@/schemas";
-import { generateUniqueLink } from "@/utils/create";
+import generateUniqueLink from "@/utils/generate-suffix";
 import * as linkService from "@/services/link-service";
 import ErrorWithStatus from "@/Exception/custom-error";
 
