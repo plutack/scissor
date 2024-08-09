@@ -28,11 +28,10 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const userId = await getUserIdFromRequest(request);
-    const validatedObject = await validateWithSchema(
-      request,
-      shortenLinkSchema,
-    );
+    const [userId, validatedObject] = await Promise.all([
+      getUserIdFromRequest(request),
+      validateWithSchema(request, shortenLinkSchema),
+    ]);
     const customSuffix = await generateUniqueLink(validatedObject);
     console.log(customSuffix);
     const data = await linkService.createLink(

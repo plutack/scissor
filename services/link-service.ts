@@ -74,7 +74,6 @@ export const createLink = async (
     console.log(data);
     return { success: true, data };
   } catch (error) {
-    console.error("Failed to create link:", error);
     throw new ErrorWithStatus("Failed to create link", 500);
   }
 };
