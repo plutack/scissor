@@ -1,5 +1,4 @@
-// QRCodePopover.tsx
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,17 +6,14 @@ import { Copy, Download, X, Twitter, Facebook, Share2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { saveAs } from "file-saver";
 
-// TODO immport twitter new icon
-
 type QRCodePopoverProps = {
   shortUrl: string;
   onClose: () => void;
 };
 
-// TODO fix downlaod button and social button links
 export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
   const { toast } = useToast();
-  const qrRef = useRef<SVGSVGElement>(null);
+  const qrRef = useRef<HTMLDivElement>(null);
 
   const copyToClipboard = async () => {
     try {
@@ -37,25 +33,26 @@ export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
 
   const downloadQRCode = () => {
     if (qrRef.current) {
-      const svg = qrRef.current;
-      const svgData = new XMLSerializer().serializeToString(svg);
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const img = new Image();
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx?.drawImage(img, 0, 0);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            console.log(blob);
-            saveAs(blob, "qrcode.png");
-          }
-        });
-      };
-      img.src =
-        "data:image/svg+xml;base64," +
-        btoa(decodeURIComponent(encodeURIComponent(svgData)));
+      const svgElement = qrRef.current.querySelector("svg");
+      if (svgElement) {
+        const svgData = new XMLSerializer().serializeToString(svgElement);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx?.drawImage(img, 0, 0);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              saveAs(blob, "qrcode.png");
+            }
+          });
+        };
+        img.src =
+          "data:image/svg+xml;base64," +
+          btoa(decodeURIComponent(encodeURIComponent(svgData)));
+      }
     }
   };
 
@@ -63,7 +60,7 @@ export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
     const urls = {
       twitter: `https://x.com/intent/tweet?url=${encodeURIComponent(shortUrl)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        shortUrl,
+        shortUrl
       )}`,
       reddit: `https://reddit.com/submit?url=${encodeURIComponent(shortUrl)}`,
     };
@@ -85,8 +82,8 @@ export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
             <Copy className="h-4 w-4" />
           </Button>
         </div>
-        <div className="flex justify-center mb-4">
-          <QRCodeSVG ref={qrRef} value={shortUrl} size={256} />
+        <div className="flex justify-center mb-4" ref={qrRef}>
+          <QRCodeSVG value={shortUrl} size={256} />
         </div>
         <div className="grid grid-cols-2 gap-2 mb-4">
           <Button className="w-full" onClick={downloadQRCode}>
