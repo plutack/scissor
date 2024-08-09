@@ -1,48 +1,25 @@
-import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
-import { decode } from "next-auth/jwt";
+import { getUserIdFromRequest } from "@/utils/auth";
+import ErrorWithStatus from "@/Exception/custom-error";
+import * as linkService from "@/services/link-service";
 
 export async function GET(request: Request) {
-  let userId;
-  // Check for Bearer token
-  const authHeader = request.headers.get("Authorization");
-  if (authHeader && authHeader.startsWith("Bearer ")) {
-    const token = authHeader.split(" ")[1];
-    try {
-      const decodedToken = await decode({
-        token,
-        secret: process.env.AUTH_SECRET!,
-        salt: "authjs.session-token",
-      });
-      if (decodedToken) {
-        userId = decodedToken.sub;
-      }
-    } catch (error) {
-      console.error("Token verification failed:", error);
+  try {
+    const userId = await getUserIdFromRequest(request);
+    if (!userId) {
+      throw new ErrorWithStatus("Unauthorized", 401);
     }
+    const topCountries = await linkService.getUserTopCountries(userId);
+    return Response.json(
+      { success: true, data: topCountries },
+      { status: 200 },
+    );
+  } catch (error) {
+    if (error instanceof ErrorWithStatus) {
+      return Response.json({ error: error.message }, { status: error.status });
+    }
+    return Response.json(
+      { error: "An unexpected error occurred" },
+      { status: 500 },
+    );
   }
-  const topCountries = await db.visit.groupBy({
-    by: ["country"],
-    where: {
-      link: {
-        userId,
-      },
-    },
-    _sum: {
-      count: true,
-    },
-    orderBy: {
-      _sum: {
-        count: "desc",
-      },
-    },
-    take: 5,
-  });
-
-  const formattedData = topCountries.map((country) => ({
-    country: country.country,
-    clicks: country._sum.count || 0,
-  }));
-
-  return NextResponse.json(formattedData);
 }

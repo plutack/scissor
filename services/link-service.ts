@@ -126,3 +126,28 @@ export const updateLink = async (
     },
   });
 };
+
+export const getUserTopCountries = async (userId: string) => {
+  const topCountries = await db.visit.groupBy({
+    by: ["country"],
+    where: {
+      link: {
+        userId,
+      },
+    },
+    _sum: {
+      count: true,
+    },
+    orderBy: {
+      _sum: {
+        count: "desc",
+      },
+    },
+  });
+
+  const formattedData = topCountries.map((country) => ({
+    country: country.country,
+    clicks: country._sum.count || 0,
+  }));
+  return formattedData;
+};

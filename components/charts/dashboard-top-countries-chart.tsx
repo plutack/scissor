@@ -31,12 +31,15 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+// TODO change to ky
 const fetchTopCountries = async (): Promise<TopCountry[]> => {
   const response = await fetch("/api/link/top-countries");
   if (!response.ok) {
-    throw new Error("Network response was not ok");
+    throw new Error("cannot fetch data");
   }
-  return response.json();
+
+  const { data } = await response.json();
+  return data;
 };
 
 export function DashboardTopCountriesChart() {

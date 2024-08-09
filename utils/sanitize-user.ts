@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { User } from "@prisma/client";
 
 const prisma = new PrismaClient();
-
+// TODO move to user service function  and rename
 const sanitizeUser = async (
   email: string,
 ): Promise<Omit<User, "password" | "image"> | null> => {

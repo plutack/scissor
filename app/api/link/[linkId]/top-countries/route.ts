@@ -12,6 +12,7 @@ export async function GET(
     };
   },
 ) {
+  // TODO: check auth
   const { linkId } = params;
   const { searchParams } = new URL(req.url);
   console.log("searchParams", searchParams);
