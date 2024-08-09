@@ -8,13 +8,14 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { Link } from "@prisma/client";
 
 export function ProtectedShortenLinkForm() {
   const [showForm, setShowForm] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [shortUrl, setShortUrl] = useState("");
 
-  const handleSuccess = (data: any) => {
+  const handleSuccess = ({ data }: { data: Link }) => {
     setShortUrl(`${process.env.NEXT_PUBLIC_BASE_URL}/${data.customSuffix}`);
     setShowForm(false);
     setShowQRCode(true);
