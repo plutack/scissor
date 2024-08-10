@@ -196,3 +196,56 @@ export const updateDbOnLinkClick = async (
   });
 };
 
+export const getLinkStats = async (linkId: string, userId: string) => {
+  const link = await db.link.findUnique({
+    where: {
+      id: linkId,
+      userId: userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      customSuffix: true,
+      createdAt: true,
+      updatedAt: true,
+      clicks: true,
+    },
+  });
+
+  if (!link) {
+    throw new ErrorWithStatus("Link not found", 404);
+  }
+
+  const visits = await db.visit.findMany({
+    where: {
+      linkId,
+    },
+    orderBy: {
+      count: "desc",
+    },
+  });
+
+  const totalVisits = visits.reduce((acc, visit) => acc + visit.count, 0);
+  const uniqueCountries = new Set(visits.map((visit) => visit.country));
+  const top5Countries = visits
+    .slice(0, 5)
+    .map(({ country, count }) => ({ country, count }));
+
+  // Calculate percentage of visits for each country
+  const countryStats = visits.map((visit) => ({
+    country: visit.country,
+    count: visit.count,
+    percentage: ((visit.count / totalVisits) * 100).toFixed(2),
+  }));
+
+  return {
+    success: true,
+    data: {
+      link,
+      totalVisits,
+      uniqueCountriesCount: uniqueCountries.size,
+      top5Countries,
+      countryStats,
+    },
+  };
+};

@@ -11,13 +11,13 @@ export async function GET(
   try {
     const userId = await getUserIdFromRequest(request);
     const { linkId } = params;
+    if (!userId) {
+      throw new ErrorWithStatus("Unauthorized", 401);
+    }
 
-    const existingLink = await linkService.getLink(linkId, userId);
+    const data = await linkService.getLinkStats(linkId, userId);
 
-    return Response.json(
-      { success: true, data: existingLink },
-      { status: 200 },
-    );
+    return Response.json({ success: true, data }, { status: 200 });
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       return Response.json(
