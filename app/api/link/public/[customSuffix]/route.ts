@@ -1,27 +1,29 @@
-import { db } from "@/lib/db";
-import { Link } from "@prisma/client";
+import * as linkService from "@/services/link-service";
+import ErrorWithStatus from "@/Exception/custom-error";
 
 export async function GET(
   req: Request,
   { params }: { params: { customSuffix: string } },
 ) {
-  const { customSuffix } = params;
+  try {
+    const { customSuffix } = params;
+    const existinglink = await linkService.getLinkByCustomSuffix(customSuffix);
 
-  const existinglink = await db.link.findUnique({
-    where: {
-      customSuffix,
-    },
-  });
+    if (!existinglink) {
+      throw new ErrorWithStatus("Link not found", 404);
+    }
 
-  if (!existinglink) {
     return Response.json(
-      { success: false, message: "Link not found" },
-      { status: 404 },
+      { success: true, data: existinglink.link },
+      { status: 200 },
     );
+  } catch (error) {
+    if (error instanceof ErrorWithStatus) {
+      return Response.json(
+        { message: error.message },
+        { status: error.status },
+      );
+    }
+    return Response.json({ message: "Error fetching link" }, { status: 500 });
   }
-
-  return Response.json(
-    { success: true, data: existinglink.link },
-    { status: 200 },
-  );
 }

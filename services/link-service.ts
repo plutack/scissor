@@ -151,7 +151,6 @@ export const getUserTopCountries = async (userId: string) => {
   }));
   return formattedData;
 };
-import { is } from "date-fns/locale";
 
 export const updateDbOnLinkClick = async (
   customSuffix: string,
@@ -196,3 +195,4 @@ export const updateDbOnLinkClick = async (
     return { updatedLink, updatedVisit };
   });
 };
+
