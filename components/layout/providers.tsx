@@ -4,6 +4,7 @@ import ThemeProvider from "./ThemeToggle/theme-provider";
 import { SessionProvider, SessionProviderProps } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import { SocketProvider } from "./socket-provider";
 export default function Providers({
   session,
   children,
@@ -16,7 +17,9 @@ export default function Providers({
     <>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SessionProvider session={session}>{children}</SessionProvider>
+          <SessionProvider session={session}>
+            <SocketProvider>{children}</SocketProvider>
+          </SessionProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </>

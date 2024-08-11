@@ -229,7 +229,7 @@ export const getLinkStats = async (linkId: string, userId: string) => {
   const uniqueCountries = new Set(visits.map((visit) => visit.country));
   const top5Countries = visits
     .slice(0, 5)
-    .map(({ country, count }) => ({ country, count }));
+    .map(({ country, count }) => ({ country, clickCount: count }));
 
   // Calculate percentage of visits for each country
   const countryStats = visits.map((visit) => ({
@@ -239,13 +239,10 @@ export const getLinkStats = async (linkId: string, userId: string) => {
   }));
 
   return {
-    success: true,
-    data: {
-      link,
-      totalVisits,
-      uniqueCountriesCount: uniqueCountries.size,
-      top5Countries,
-      countryStats,
-    },
+    link,
+    totalVisits,
+    uniqueCountriesCount: uniqueCountries.size,
+    top5Countries,
+    countryStats,
   };
 };

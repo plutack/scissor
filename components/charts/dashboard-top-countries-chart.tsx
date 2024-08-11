@@ -1,9 +1,8 @@
+// components/charts/dashboard-top-countries-chart.tsx
 "use client";
 
 import * as React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { Loader2 } from "lucide-react";
 
 import {
   Card,
@@ -21,53 +20,21 @@ import {
 
 interface TopCountry {
   country: string;
-  clicks: number;
+  clickCount: number;
+}
+
+interface DashboardTopCountriesChartProps {
+  data: TopCountry[];
 }
 
 const chartConfig = {
-  clicks: {
+  clickCount: {
     label: "Number of Clicks",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
 
-// TODO change to ky
-const fetchTopCountries = async (): Promise<TopCountry[]> => {
-  const response = await fetch("/api/link/top-countries");
-  if (!response.ok) {
-    throw new Error("cannot fetch data");
-  }
-
-  const { data } = await response.json();
-  return data;
-};
-
-export function DashboardTopCountriesChart() {
-  const { data, isLoading, error } = useQuery<TopCountry[], Error>({
-    queryKey: ["topCountries"],
-    queryFn: fetchTopCountries,
-  });
-
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-[280px]">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-[280px]">
-          <div>An error occurred: {error.message}</div>
-        </CardContent>
-      </Card>
-    );
-  }
-
+export function DashboardTopCountriesChart({ data }: DashboardTopCountriesChartProps) {
   return (
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
@@ -105,12 +72,12 @@ export function DashboardTopCountriesChart() {
                 content={
                   <ChartTooltipContent
                     className="w-[150px]"
-                    nameKey="clicks"
+                    nameKey="clickCount"
                     labelFormatter={(value) => value}
                   />
                 }
               />
-              <Bar dataKey="clicks" fill={`var(--color-clicks)`} />
+              <Bar dataKey="clickCount" fill={`var(--color-clickCount)`} />
             </BarChart>
           </ChartContainer>
         ) : (

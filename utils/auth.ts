@@ -1,6 +1,7 @@
 import { decode } from "next-auth/jwt";
 import { auth } from "@/auth";
 import ErrorWithStatus from "@/Exception/custom-error";
+import { NextApiRequest } from "next";
 
 export const getUserIdFromRequest = async (request: Request) => {
   // Check for Bearer token
