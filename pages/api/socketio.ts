@@ -23,13 +23,11 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
       console.log("Initializing new Socket.io instance");
       const io = new ServerIO(res.socket.server as any, {
         path: "/api/socketio",
-        // cors: {
-        //   origin: "*", // Adjust this as needed for your use case
-        //   methods: ["GET", "POST"],
-        //   allowedHeaders: ["my-custom-header"],
-        //   credentials: true,
-        // },
         addTrailingSlash: false,
+        cors: {
+          origin: process.env.NEXT_PUBLIC_BASE_URl,
+          credentials: true,
+        },
       });
 
       io.use(async (socket, next) => {
