@@ -51,7 +51,7 @@ export default function HomePage() {
               &ldquo;Scissor has revolutionized our marketing campaigns. The
               custom URLs and analytics features are game-changers!&rdquo;
             </p>
-            <footer className="text-sm">- Marketing Director, TechCorp</footer>
+            <footer className="text-sm">- Marketing Director, Talut Tech</footer>
           </blockquote>
         </div>
       </div>
