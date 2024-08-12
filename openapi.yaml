@@ -23,7 +23,10 @@ tags:
   - name: User
     description: Operation related to users
 servers:
-  - url: 'http://localhost:3000'
+  - url: 'http://localhost:3000/api'
+    description: Development
+  - url: 'https://scissors.talut.tech/api'
+    description: Production
 paths:
   /auth/login:
     post:
