@@ -2,8 +2,6 @@ import { Server as ServerIO } from "socket.io";
 import * as userService from "../../services/user-service";
 import { NextApiResponseServerIo } from "@/types/socketio";
 import { NextApiRequest } from "next";
-import { Server as NetServer } from "http";
-import { getUserIdFromRequest } from "@/utils/auth";
 
 export const config = {
   api: {
@@ -22,7 +20,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
     if (!res.socket.server.io) {
       console.log("Initializing new Socket.io instance");
       const io = new ServerIO(res.socket.server as any, {
-        path: "/api/socketio",
+        path: "/api/scketio",
         addTrailingSlash: false,
         cors: {
           origin: process.env.NEXT_PUBLIC_BASE_URl,
