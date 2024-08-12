@@ -20,10 +20,10 @@ export async function GET(
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       return Response.json(
-        { message: error.message },
+        { success: false, message: error.message },
         { status: error.status },
       );
     }
-    return Response.json({ message: "Error fetching link" }, { status: 500 });
+    return Response.json({ success: false, message: "Error fetching link" }, { status: 500 });
   }
 }

@@ -15,10 +15,10 @@ export async function GET(request: Request) {
     );
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
-      return Response.json({ error: error.message }, { status: error.status });
+      return Response.json({ success: false, error: error.message }, { status: error.status });
     }
     return Response.json(
-      { error: "An unexpected error occurred" },
+      { success: false, error: "An unexpected error occurred" },
       { status: 500 },
     );
   }

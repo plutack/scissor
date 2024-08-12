@@ -49,7 +49,7 @@ export async function PATCH(
 
     // If still no userId, return unauthorized
     if (!userId) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
     await linkService.updateLink(linkId, userId, validatedObject);

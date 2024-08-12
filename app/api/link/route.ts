@@ -17,10 +17,10 @@ export async function GET(request: Request) {
     return Response.json(response);
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
-      return Response.json({ error: error.message }, { status: error.status });
+      return Response.json({ success: false, error: error.message }, { status: error.status });
     }
     return Response.json(
-      { error: "An unexpected error occurred" },
+      { success: false, error: "An unexpected error occurred" },
       { status: 500 },
     );
   }
@@ -43,10 +43,10 @@ export async function POST(request: Request) {
   } catch (error) {
     console.log(error);
     if (error instanceof ErrorWithStatus) {
-      return Response.json({ error: error.message }, { status: error.status });
+      return Response.json({ success: false, error: error.message }, { status: error.status });
     }
     return Response.json(
-      { error: "An unexpected error occurred" },
+      { success: false, error: "An unexpected error occurred" },
       { status: 500 },
     );
   }
