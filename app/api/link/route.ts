@@ -1,4 +1,4 @@
-import { validateWithSchema } from "@/validation/validate-request";
+import { validateWithSchema } from "@/utils/validate-request";
 import { getUserIdFromRequest } from "@/utils/auth";
 import { shortenLinkSchema } from "@/schemas";
 import generateUniqueLink from "@/utils/generate-suffix";
