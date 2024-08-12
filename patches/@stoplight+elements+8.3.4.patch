@@ -1,0 +1,12 @@
+diff --git a/node_modules/@stoplight/elements/package.json b/node_modules/@stoplight/elements/package.json
+index ad239f2..b7ad04e 100644
+--- a/node_modules/@stoplight/elements/package.json
++++ b/node_modules/@stoplight/elements/package.json
+@@ -43,6 +43,7 @@
+     "./styles.min.css": "./styles.min.css",
+     "./web-components.min.js": "./web-components.min.js",
+     ".": {
++      "types": "./index.d.ts",
+       "require": "./index.js",
+       "import": "./index.mjs"
+     }

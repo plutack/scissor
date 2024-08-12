@@ -10,7 +10,8 @@
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "start:migrate": "prisma migrate deploy && next start"
+    "start:migrate": "prisma migrate deploy && next start",
+    "postinstall": "npx patch-package"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.1",
