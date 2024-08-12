@@ -1,4 +1,5 @@
 "use client";
+
 import { DashboardTopCountriesChart } from "@/components/charts/dashboard-top-countries-chart";
 import PageContainer from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
@@ -10,8 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { auth } from "@/auth";
-import { Link2Icon, MousePointerClickIcon, FlagIcon } from "lucide-react";
+import { MousePointerClickIcon, FlagIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -23,8 +23,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
-
-// FIXME fix tyoes
 interface LinkData {
   id: string;
   name: string | null;
@@ -56,10 +54,8 @@ interface ApiResponse {
   };
 }
 
-import { downloadCSV } from "@/utils/csv-download";
-
 export default function LinkAnalyticsPage() {
-  // Mock API response data
+  // TODO Mock API response data
   const apiResponse: ApiResponse = {
     success: true,
     data: {
@@ -139,6 +135,7 @@ export default function LinkAnalyticsPage() {
   } = apiResponse.data;
 
   const calculatedAverage = Math.floor(link.clicks / uniqueCountriesCount);
+
   const handleDownloadReport = () => {
     const csvContent = [
       "Link Analytics Report",
@@ -193,7 +190,7 @@ export default function LinkAnalyticsPage() {
       <div className="space-y-2">
         <div className="flex h-full items-center justify-between space-y-2">
           <h2 className="text-2xl font-bold tracking-tight">
-            {link.customSuffix} - Analytics
+            {link.name || link.customSuffix} - Analytics
           </h2>
           <Button onClick={handleDownloadReport}>Download Report</Button>
         </div>
@@ -278,13 +275,13 @@ export default function LinkAnalyticsPage() {
 }
 
 interface CountryStatsTableProps {
-  countryStats: CountryData[];
+  countryStats: StatsData[];
 }
 
 function CountryStatsTable({ countryStats }: CountryStatsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{
-    key: keyof CountryData;
+    key: keyof StatsData;
     direction: "ascending" | "descending";
   }>({ key: "count", direction: "descending" });
 
@@ -302,7 +299,7 @@ function CountryStatsTable({ countryStats }: CountryStatsTableProps) {
     stat.country.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const requestSort = (key: keyof CountryData) => {
+  const requestSort = (key: keyof StatsData) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";
