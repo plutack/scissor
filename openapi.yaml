@@ -4,12 +4,12 @@ x-stoplight:
 info:
   license:
     name: MIT
-    url: 'https://opensource.org/license/MIT'
+    url: "https://opensource.org/license/MIT"
   title: link slice new
-  version: '1.0'
+  version: "1.0"
   contact:
     name: Talut Salako
-    url: 'https://blog.talut.tech/'
+    url: "https://blog.talut.tech/"
     email: salakotalut@gmail.com
   summary: Authenticate User
   description: link slice API documentation
@@ -23,9 +23,9 @@ tags:
   - name: User
     description: Operation related to users
 servers:
-  - url: 'http://localhost:3000/api'
+  - url: "http://localhost:3000/api"
     description: Development
-  - url: 'https://scissors.talut.tech/api'
+  - url: "https://scissors.talut.tech/api"
     description: Production
 paths:
   /auth/login:
@@ -34,7 +34,7 @@ paths:
       tags:
         - Authentication
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -56,8 +56,8 @@ paths:
                   accessToken:
                     type: string
                   user:
-                    $ref: '#/components/schemas/User'
-        '400':
+                    $ref: "#/components/schemas/User"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -75,7 +75,7 @@ paths:
                     type: string
                     default: invalid fields
               examples: {}
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -95,7 +95,7 @@ paths:
                   error:
                     type: string
                     default: Invalid credentials
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -126,7 +126,7 @@ paths:
               x-examples:
                 Example 1:
                   email: 1@2.com
-                  password: '123'
+                  password: "123"
               required:
                 - email
                 - password
@@ -147,7 +147,7 @@ paths:
         - Authentication
         - User
       responses:
-        '201':
+        "201":
           description: User Created
           content:
             application/json:
@@ -173,7 +173,7 @@ paths:
                       name: string
                       email: string
                       id: string
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -189,7 +189,7 @@ paths:
                   error:
                     type: string
                     default: Invalid fields
-        '409':
+        "409":
           description: Conflict
           content:
             application/json:
@@ -209,7 +209,7 @@ paths:
                 Example 1:
                   name: John Doe
                   email: johndoe@gmail.com
-                  password: '123'
+                  password: "123"
               required:
                 - name
                 - email
@@ -239,7 +239,7 @@ paths:
       tags:
         - Link
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -254,71 +254,71 @@ paths:
                         link: www.google.com
                         customSuffix: umpwv
                         clicks: 0
-                        createdAt: '2024-07-28T08:45:27.390Z'
-                        updatedAt: '2024-07-28T08:45:27.390Z'
+                        createdAt: "2024-07-28T08:45:27.390Z"
+                        updatedAt: "2024-07-28T08:45:27.390Z"
                       - id: clz5bdhc70001sgobbg0dj8ls
                         userId: clz0c0pzw0000cetc7zbaga21
                         link: www.google.com
                         customSuffix: jXloa
                         clicks: 0
-                        createdAt: '2024-07-28T08:44:23.430Z'
-                        updatedAt: '2024-07-28T08:44:23.430Z'
+                        createdAt: "2024-07-28T08:44:23.430Z"
+                        updatedAt: "2024-07-28T08:44:23.430Z"
                       - id: clz4ohf7f0007pk3hyuiedf55
                         userId: clz0c0pzw0000cetc7zbaga21
-                        link: 'https://www.github.com'
+                        link: "https://www.github.com"
                         customSuffix: google1s11
                         clicks: 0
-                        createdAt: '2024-07-27T22:03:36.123Z'
-                        updatedAt: '2024-07-27T22:04:45.798Z'
+                        createdAt: "2024-07-27T22:03:36.123Z"
+                        updatedAt: "2024-07-27T22:04:45.798Z"
                       - id: clz4isrkq000138rutk6eil90
                         userId: clz0c0pzw0000cetc7zbaga21
-                        link: 'https://www.github.com'
+                        link: "https://www.github.com"
                         customSuffix: Pquwy
                         clicks: 0
-                        createdAt: '2024-07-27T19:24:27.673Z'
-                        updatedAt: '2024-07-27T19:24:27.673Z'
+                        createdAt: "2024-07-27T19:24:27.673Z"
+                        updatedAt: "2024-07-27T19:24:27.673Z"
                       - id: clz3lutuy000egqknl28webbs
                         userId: clz0c0pzw0000cetc7zbaga21
-                        link: 'https://www.github.com'
+                        link: "https://www.github.com"
                         customSuffix: qFPds
                         clicks: 0
-                        createdAt: '2024-07-27T04:02:16.618Z'
-                        updatedAt: '2024-07-27T04:02:16.618Z'
+                        createdAt: "2024-07-27T04:02:16.618Z"
+                        updatedAt: "2024-07-27T04:02:16.618Z"
                       - id: clz3lrcdq000bgqknrtd5e0ft
                         userId: clz0c0pzw0000cetc7zbaga21
-                        link: 'https://www.github.com'
+                        link: "https://www.github.com"
                         customSuffix: NvGfd
                         clicks: 0
-                        createdAt: '2024-07-27T03:59:33.999Z'
-                        updatedAt: '2024-07-27T03:59:33.999Z'
+                        createdAt: "2024-07-27T03:59:33.999Z"
+                        updatedAt: "2024-07-27T03:59:33.999Z"
                       - id: clz3lqlmf0009gqknysubp962
                         userId: clz0c0pzw0000cetc7zbaga21
-                        link: 'https://www.github.com'
+                        link: "https://www.github.com"
                         customSuffix: BeZxG
                         clicks: 0
-                        createdAt: '2024-07-27T03:58:59.319Z'
-                        updatedAt: '2024-07-27T03:58:59.319Z'
+                        createdAt: "2024-07-27T03:58:59.319Z"
+                        updatedAt: "2024-07-27T03:58:59.319Z"
                       - id: clz3lod6g0007gqknriwbres3
                         userId: clz0c0pzw0000cetc7zbaga21
-                        link: 'https://www.google.com'
+                        link: "https://www.google.com"
                         customSuffix: JSBVg
                         clicks: 0
-                        createdAt: '2024-07-27T03:57:15.064Z'
-                        updatedAt: '2024-07-27T03:57:15.064Z'
+                        createdAt: "2024-07-27T03:57:15.064Z"
+                        updatedAt: "2024-07-27T03:57:15.064Z"
                       - id: clz3j9yqa00057mat5ku4xr29
                         userId: clz0c0pzw0000cetc7zbaga21
-                        link: 'https://www.google.com'
+                        link: "https://www.google.com"
                         customSuffix: google
                         clicks: 0
-                        createdAt: '2024-07-27T02:50:03.923Z'
-                        updatedAt: '2024-07-27T02:50:03.923Z'
+                        createdAt: "2024-07-27T02:50:03.923Z"
+                        updatedAt: "2024-07-27T02:50:03.923Z"
                       - id: clz3j8tuz00017matmu8a8wxh
                         userId: clz0c0pzw0000cetc7zbaga21
-                        link: 'https://www.facebook.com'
+                        link: "https://www.facebook.com"
                         customSuffix: facebook
                         clicks: 0
-                        createdAt: '2024-07-27T02:49:10.907Z'
-                        updatedAt: '2024-07-27T02:49:10.907Z'
+                        createdAt: "2024-07-27T02:49:10.907Z"
+                        updatedAt: "2024-07-27T02:49:10.907Z"
                     pagination:
                       page: 1
                       limit: 10
@@ -327,8 +327,8 @@ paths:
                 properties:
                   success:
                     type: boolean
-                  'data:':
-                    $ref: '#/components/schemas/Link'
+                  "data:":
+                    $ref: "#/components/schemas/Link"
                     x-stoplight:
                       id: i072r2oevgrsm
                   pagination:
@@ -342,7 +342,7 @@ paths:
                         type: integer
                       totalPages:
                         type: integer
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -360,7 +360,7 @@ paths:
                     type: boolean
                   error:
                     type: string
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -380,7 +380,7 @@ paths:
         id: 43ac90vrghu7f
       description: "Get all links created by authorized user\r\nAdditional query can be added to the request. \r\nPage defaults to 1 if not supplied \r\nlimit defaults to 25 if not supplied."
       requestBody:
-        description: ''
+        description: ""
         content: {}
       parameters:
         - schema:
@@ -400,7 +400,7 @@ paths:
       tags:
         - Link
       responses:
-        '201':
+        "201":
           description: Link Created
           content:
             application/json:
@@ -415,15 +415,15 @@ paths:
                       link: www.google.com
                       customSuffix: googaale
                       clicks: 0
-                      createdAt: '2024-07-28T11:14:23.177Z'
-                      updatedAt: '2024-07-28T11:14:23.177Z'
+                      createdAt: "2024-07-28T11:14:23.177Z"
+                      updatedAt: "2024-07-28T11:14:23.177Z"
                 properties:
                   success:
                     type: boolean
                     default: true
                   data:
-                    $ref: '#/components/schemas/Link'
-        '400':
+                    $ref: "#/components/schemas/Link"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -442,7 +442,7 @@ paths:
                   error:
                     type: string
               examples: {}
-        '409':
+        "409":
           description: Conflict
           content:
             application/json:
@@ -459,7 +459,7 @@ paths:
                   error:
                     type: string
                     default: custom suffix in use
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -490,7 +490,7 @@ paths:
               required:
                 - link
               properties:
-                '':
+                "":
                   type: string
                   x-stoplight:
                     id: hduocvshpvp30
@@ -503,13 +503,13 @@ paths:
       security:
         - {}
         - apiKey_1: []
-  '/link/{linkId}':
+  "/link/{linkId}":
     patch:
       summary: Patch Specific Link
       tags:
         - Link
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -531,7 +531,7 @@ paths:
                   value:
                     success: true
                     message: custom suffix changed successfully
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -544,7 +544,7 @@ paths:
                   error:
                     type: string
                     default: Invalid fields
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -559,7 +559,7 @@ paths:
                   Example 1:
                     success: false
                     error: Unauthorized
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -591,7 +591,7 @@ paths:
               properties:
                 customSuffix:
                   type: string
-                  description: 'New suffix '
+                  description: "New suffix "
       security:
         - apiKey_1: []
     parameters:
@@ -606,7 +606,7 @@ paths:
       tags:
         - Link
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -621,7 +621,7 @@ paths:
                   Example 1:
                     success: false
                     error: Unauthorized
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -636,7 +636,7 @@ paths:
                   Example 1:
                     success: false
                     error: Unauthorized
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -661,9 +661,9 @@ paths:
       tags:
         - Link
       responses:
-        '204':
+        "204":
           description: No Content
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -678,7 +678,7 @@ paths:
                   Example 1:
                     success: false
                     error: Unauthorized
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -696,7 +696,7 @@ paths:
       operationId: patch-link-click
       x-stoplight:
         id: 0a8qy4w2mw9l2
-      description: 'increase click count on link visit '
+      description: "increase click count on link visit "
       requestBody:
         description: Increase click count for specific link
         content:
@@ -712,20 +712,20 @@ paths:
                 Example 1:
                   customSuffix: string
                   country: string
-  '/link/public/{customSuffix}':
+  "/link/public/{customSuffix}":
     parameters:
       - schema:
           type: string
         name: customSuffix
         in: path
         required: true
-        description: 'The custom suffix of a link '
+        description: "The custom suffix of a link "
     get:
       summary: Get Link
       tags:
         - Link
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -742,7 +742,7 @@ paths:
                     type: string
                     x-stoplight:
                       id: 919n4uco0u0v1
-        '404':
+        "404":
           description: Not Found
           content:
             application/json:
@@ -757,7 +757,7 @@ paths:
                   Example 1:
                     success: false
                     error: Unauthorized
-        '409':
+        "409":
           description: Conflict
           content:
             application/json:
@@ -772,7 +772,7 @@ paths:
                   Example 1:
                     success: false
                     error: Unauthorized
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -798,7 +798,7 @@ paths:
         - Link
         - Protected
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -849,7 +849,7 @@ paths:
                         clicks: 1
                       - country: Unknown
                         clicks: 1
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -864,7 +864,7 @@ paths:
                   Example 1:
                     success: false
                     error: Unauthorized
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -892,7 +892,7 @@ paths:
         - User
         - Protected
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -951,7 +951,7 @@ paths:
                         - link: coolify.talut.tech
                           customSuffix: coolify
                         - link: coolify.talut.tech
-                          customSuffix: 'jg,rp3'
+                          customSuffix: "jg,rp3"
                       topCountries:
                         - country: France
                           clickCount: 21
@@ -963,7 +963,7 @@ paths:
                           clickCount: 4
                         - country: The Netherlands
                           clickCount: 4
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -978,7 +978,7 @@ paths:
                   Example 1:
                     success: false
                     error: Unauthorized
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -996,7 +996,7 @@ paths:
       operationId: get-user-stats
       x-stoplight:
         id: uzcdfj0ewpvkk
-      description: 'Get basic info about user which includes user infomation, last 5 links created , total number of link created etc'
+      description: "Get basic info about user which includes user infomation, last 5 links created , total number of link created etc"
       security:
         - apiKey_1: []
 components:
@@ -1011,7 +1011,7 @@ components:
         email:
           type: string
         emailVerified:
-          type: 'null'
+          type: "null"
         role:
           type: string
         totalClicks:
@@ -1037,8 +1037,8 @@ components:
           link: www.google.com
           customSuffix: umpwv
           clicks: 0
-          createdAt: '2024-07-28T08:45:27.390Z'
-          updatedAt: '2024-07-28T08:45:27.390Z'
+          createdAt: "2024-07-28T08:45:27.390Z"
+          updatedAt: "2024-07-28T08:45:27.390Z"
       properties:
         id:
           type: string
