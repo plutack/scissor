@@ -3,12 +3,14 @@ import { getUserIdFromRequest } from "@/utils/auth";
 import * as linkService from "@/services/link-service";
 import ErrorWithStatus from "@/Exception/custom-error";
 import { validateWithSchema } from "@/utils/validate-request";
+import rateLimitIP from "@/utils/rate-limit";
 
 export async function GET(
   request: Request,
   { params }: { params: { linkId: string } },
 ) {
   try {
+    await rateLimitIP(request);
     const userId = await getUserIdFromRequest(request);
     const { linkId } = params;
     if (!userId) {
@@ -49,7 +51,7 @@ export async function PATCH(
 
     // If still no userId, return unauthorized
     if (!userId) {
-      return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
+      throw new ErrorWithStatus("Unauthorized", 401);
     }
 
     await linkService.updateLink(linkId, userId, validatedObject);

@@ -3,12 +3,13 @@ import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { AuthError } from "next-auth";
 import { cookies } from "next/headers";
-import { db } from "@/lib/db";
-import { ZodError } from "zod";
 import sanitizeUser from "@/utils/sanitize-user";
+import rateLimitIP from "@/utils/rate-limit";
+import ErrorWithStatus from "@/Exception/custom-error";
 
 export async function POST(request: Request, response: Response) {
   try {
+    await rateLimitIP(request);
     const body = await request.json();
     const validatedFields = loginSchema.safeParse(body);
     console.log(validatedFields);
@@ -46,10 +47,16 @@ export async function POST(request: Request, response: Response) {
           );
         default:
           return Response.json(
-            { success:false, error: "Something went wrong" },
+            { success: false, error: "Something went wrong" },
             { status: 500 },
           );
       }
+    }
+    if (error instanceof ErrorWithStatus) {
+      return Response.json(
+        { success: false, error: error.message },
+        { status: error.status },
+      );
     }
     return Response.json(
       { success: false, error: "An unexpected error occurred" },

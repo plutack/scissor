@@ -1,11 +1,13 @@
 import * as linkService from "@/services/link-service";
 import ErrorWithStatus from "@/Exception/custom-error";
+import rateLimitIP from "@/utils/rate-limit";
 
 export async function GET(
-  req: Request,
+  request: Request,
   { params }: { params: { customSuffix: string } },
 ) {
   try {
+    await rateLimitIP(request);
     const { customSuffix } = params;
     const existinglink = await linkService.getLinkByCustomSuffix(customSuffix);
 

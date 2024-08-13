@@ -4,9 +4,11 @@ import { shortenLinkSchema } from "@/schemas";
 import generateUniqueLink from "@/utils/generate-suffix";
 import * as linkService from "@/services/link-service";
 import ErrorWithStatus from "@/Exception/custom-error";
+import rateLimitIP from "@/utils/rate-limit";
 
 export async function GET(request: Request) {
   try {
+    await rateLimitIP(request);
     const userId = await getUserIdFromRequest(request);
     if (!userId) {
       throw new ErrorWithStatus("Unauthorized", 401);
@@ -17,7 +19,10 @@ export async function GET(request: Request) {
     return Response.json(response);
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
-      return Response.json({ success: false, error: error.message }, { status: error.status });
+      return Response.json(
+        { success: false, error: error.message },
+        { status: error.status },
+      );
     }
     return Response.json(
       { success: false, error: "An unexpected error occurred" },
@@ -28,6 +33,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    await rateLimitIP(request);
     const [userId, validatedObject] = await Promise.all([
       getUserIdFromRequest(request),
       validateWithSchema(request, shortenLinkSchema),
@@ -43,7 +49,10 @@ export async function POST(request: Request) {
   } catch (error) {
     console.log(error);
     if (error instanceof ErrorWithStatus) {
-      return Response.json({ success: false, error: error.message }, { status: error.status });
+      return Response.json(
+        { success: false, error: error.message },
+        { status: error.status },
+      );
     }
     return Response.json(
       { success: false, error: "An unexpected error occurred" },

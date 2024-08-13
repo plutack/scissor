@@ -1,9 +1,11 @@
 import { getUserIdFromRequest } from "@/utils/auth";
 import ErrorWithStatus from "@/Exception/custom-error";
 import * as linkService from "@/services/link-service";
+import rateLimitIP from "@/utils/rate-limit";
 
 export async function GET(request: Request) {
   try {
+    await rateLimitIP(request);
     const userId = await getUserIdFromRequest(request);
     if (!userId) {
       throw new ErrorWithStatus("Unauthorized", 401);

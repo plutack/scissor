@@ -1,10 +1,12 @@
 import ErrorWithStatus from "@/Exception/custom-error";
 import * as linkService from "@/services/link-service";
+import rateLimitIP from "@/utils/rate-limit";
 
-export async function PATCH(req: Request) {
+export async function PATCH(request: Request) {
   try {
-    const body = await req.json();
-    const { customSuffix, country }: { customSuffix: string, country: string } =
+    await rateLimitIP(request);
+    const body = await request.json();
+    const { customSuffix, country }: { customSuffix: string; country: string } =
       body;
 
     if (!customSuffix || !country) {
@@ -17,7 +19,10 @@ export async function PATCH(req: Request) {
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       console.error("Error updating link click:", error); // TODO properly log error
-      return Response.json({ success: false, error: error.message }, { status: error.status });
+      return Response.json(
+        { success: false, error: error.message },
+        { status: error.status },
+      );
     }
     return Response.json(
       { message: "Error updating link click" },

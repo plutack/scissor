@@ -1,9 +1,11 @@
 import ErrorWithStatus from "@/Exception/custom-error";
 import * as userService from "@/services/user-service";
 import { getUserIdFromRequest } from "@/utils/auth";
+import rateLimitIP from "@/utils/rate-limit";
 
 export async function GET(request: Request) {
   try {
+    await rateLimitIP(request);
     const userId = await getUserIdFromRequest(request);
 
     if (!userId) {
