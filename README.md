@@ -1,6 +1,6 @@
 # AltSchool of Backend Engineering (NodeJs) Tinyuka 2023 Capstone Project
-**Name:** Scissor
-**Live URL**: https://scissor.talut.tech
+**Name:** Scissor <br>
+**Live URL**: https://scissor.talut.tech <br>
 **Live Api Docs**: https://scissor.talut.tech/api-docs
 
 ## Tools Used
