@@ -9,6 +9,8 @@
 - [Prisma ORM](https://www.prisma.io/nextjs)
 - [Postgresql](https://www.postgresql.org/)
 - [Node.js v20.15.1 ](https://nodejs.org/en)
+- [Socket.io](https://socket.io)
+- [Redis](https://redis.io)
 
 ## Getting Started
 1. Clone repo locally.
@@ -62,7 +64,8 @@
 
 ## Credits
 - **[@Kiranism](Kiranism):** For the well crafted shadcn frontend UI . Click [here](https://github.com/Kiranism/next-shadcn-dashboard-starter) to view  the dashboard repo.
-- **[Shadcn/ui](https://ui.shadcn.com/)**: For the highly customizable components.
+- **[Shadcn/ui](https://ui.shadcn.com/):** For the highly customizable components.
+- **[Upstash](https://upstash.com/):** For provisioning a free redis instance.
 
 
 
