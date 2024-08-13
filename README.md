@@ -45,7 +45,7 @@
 - Short links with/without custom suffix
 - User analytics for all links created
 - Individual links analytics
-- Share directly to social media (X (formerly known as twitter :skull:), Facebook and Reddit currently supported)
+- Share directly to social media. Only X (formerly known as twitter :skull:), Facebook and Reddit are currently supported
 - Generate and download QR code for individual links
 - Download individual link analytics Report (only CSV is supported)
 
