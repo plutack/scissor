@@ -11,18 +11,18 @@
 - [Node.js v20.15.1 ](https://nodejs.org/en)
 
 ## Getting Started
-1. Clone repo locally
+1. Clone repo locally.
 
     ```sh
     git clone https://github.com/plutack/scissor.git
     ```
 
-2. create a .env file using the .env.sample 
+2. create a .env file using the .env.sample.
 
     ```sh
     cp .env.sample .env
     ```
-3. Run locally 
+3. Run locally.
 
     ```sh
     npm install
@@ -34,30 +34,30 @@
 ## Key Frontend Routes
 - Unprotected
   - / - Sign In/Register page. This page also allows unauthorized users to create short links. 
-  - /api-docs - Stoplight element page render based on open api 3.1.0 specification. Users can also test out the api on this page using the development or production server  
-  - /[custom suffix] - redirect page to saved link url
+  - /api-docs - Stoplight element page render based on open api 3.1.0 specification. Users can also test out the api on this page using the development or production server. 
+  - /[custom suffix] - redirect page to saved link url.
 - Protected (/dashboard/*)
-  - /dashboard - User general analytics page
-  - /dashboard/link - All links created by user
-  - /dashboard/link/[custom Suffix] - Specific link analytics Page
+  - /dashboard - User general analytics page.
+  - /dashboard/link - All links created by user.
+  - /dashboard/link/[custom Suffix] - Specific link analytics Page.
 
 ## Features
-- Short links with/without custom suffix
-- User analytics for all links created
-- Individual links analytics
+- Short links with/without custom suffix.
+- User analytics for all links created.
+- Individual links analytics.
 - Share directly to social media. Only X (formerly known as twitter :skull:), Facebook and Reddit are currently supported
-- Generate and download QR code for individual links
-- Download individual link analytics Report (only CSV is supported)
+- Generate and download QR code for individual links.
+- Download individual link analytics Report. Only CSV is supported.
 
 ## Upcoming Features
 - Better Authentication flow
-  - Oauth implementation for user authentication
-  - Email verification for Users during Register process
-  - Reset password for users
+  - Oauth implementation for user authentication.
+  - Email verification for Users during Register process.
+  - Reset password for users.
 - Improved user experience 
-  - Add additional routes to make use of the websocket socket implementation to fetch data
-  - Improve caching of data particularly on the /dashboard/link  route
-  - implement Better Search so users can search for links without needing to load all pages 
+  - Add additional routes to make use of the websocket implementation to fetch data.
+  - Improve caching of data particularly on the /dashboard/link  route.
+  - implement Better Search so users can search for links without needing to load all pages.
 
 
 ## Credits
