@@ -2,7 +2,7 @@
 
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import PageContainer from "@/components/layout/page-container";
-import { LinkClient } from "@/components/tables/user-tables/client";
+import { LinkClient } from "@/components/tables/link-table/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
