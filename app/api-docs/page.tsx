@@ -7,7 +7,7 @@ const API = dynamic(() => import("@stoplight/elements").then((x) => x.API), {
   ssr: false,
 });
 
-// link https://raw.githubusercontent.com/plutack/link-slice/main/openapi.yaml
+// link https://raw.githubusercontent.com/plutack/scissor/main/scissor-v1.yaml
 function ApiDocPage() {
   return (
     <PageContainer scrollable>
