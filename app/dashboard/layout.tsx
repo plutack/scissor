@@ -3,6 +3,7 @@ import Sidebar from '@/components/layout/sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Metadata } from 'next';
 
+// TODO remove unused imports
 
 export const metadata: Metadata = {
   title: "Dashboard",
