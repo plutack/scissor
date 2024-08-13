@@ -1,0 +1,1067 @@
+openapi: 3.1.0
+x-stoplight:
+  id: zcl2xun02zxcl
+info:
+  license:
+    name: MIT
+    url: "https://opensource.org/license/MIT"
+  title: link slice new
+  version: "1.0"
+  contact:
+    name: Talut Salako
+    url: "https://blog.talut.tech/"
+    email: salakotalut@gmail.com
+  summary: Authenticate User
+  description: link slice API documentation
+tags:
+  - name: Authentication
+    description: Operation related to authentication
+  - name: Link
+    description: Operation related to links
+  - name: Protected
+    description: Api endpoints that are protected
+  - name: User
+    description: Operation related to users
+servers:
+  - url: "http://localhost:3000/api"
+    description: Development
+  - url: "https://scissors.talut.tech/api"
+    description: Production
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate User
+      tags:
+        - Authentication
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: true
+                    accessToken: eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoiNHN6Yk9wWThZNkNTNHFyamxvd0lGTGptMFRNcHJ0cGxQSmVqS3FHYmJLbTVRbzN5dXVlWDBaLUJmTzZJaW1iUzRaWVZzYzhLRVZ1SkwzNVRnN25abHcifQ..76xiTo6agXJ4vTXPz43O0Q.9wEiL9xqjA5rk7S0d2PCwZjwvzSaWtpAvByQ0_HV2VYP2VfI4koejGaO7w5nxwWCKur-Rgi0ronyXAzvWr8NNS50h53x8nc4CUwJb2Hijhz-Tf6g0OzgtON7EgB9ooMmXbbHdcdYrKtdKyA_zBWkwKv1zZAaOtDb4rtzwiBTOwLXxBY9d_Ov6j0ImDpMN_t1DOcUEH6kWJg61h9Z_BvSGbk2S-zfsFH6Q0SKtP4Xu00.1PrM8VuW2pAxlOSShVDDBS9CmWVHvI6jEA9Gv6LuJaY
+                    user:
+                      id: clz0c0pzw0000cetc7zbaga21
+                      name: trans
+                      email: 1@2.com
+                      emailVerified: null
+                      role: USER
+                properties:
+                  success:
+                    type: boolean
+                  accessToken:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    sucess: false
+                    error: Invalid fields
+                properties:
+                  sucess:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+                    default: invalid fields
+              examples: {}
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Invalid credentials
+                required:
+                  - success
+                  - error
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+                    default: Invalid credentials
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: email already in use
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+                    default: email already in use
+      operationId: get-auth-login
+      x-stoplight:
+        id: p9h491y08bj3a
+      security: []
+      description: Login a user with email and password.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  email: 1@2.com
+                  password: "123"
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  description: email address of user
+                password:
+                  type: string
+                  description: password of user
+            examples: {}
+        description: All fields required
+    parameters: []
+  /auth/register:
+    post:
+      summary: Register user
+      tags:
+        - Authentication
+        - User
+      responses:
+        "201":
+          description: User Created
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: true
+                    message: Email sent
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    default: Verification email sent
+              examples:
+                Example 1:
+                  value:
+                    success: true
+                    accessToken: string
+                    user:
+                      name: string
+                      email: string
+                      id: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Invalid fields
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                    default: Invalid fields
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-auth-register
+      x-stoplight:
+        id: r0z4h08591vz8
+      description: Create a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  name: John Doe
+                  email: johndoe@gmail.com
+                  password: "123"
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  description: Name of user
+                email:
+                  type: string
+                  description: Email address of user
+                password:
+                  type: string
+                  description: "password of user\r\nmust contain lowercase, uppercase, numbers, symbol"
+            examples:
+              Example 1:
+                value:
+                  name: string
+                  email: string
+                  password: string
+        description: All fields are required
+      security: []
+    parameters: []
+  /link:
+    get:
+      summary: Get all links
+      tags:
+        - Link
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: true
+                    data:
+                      - id: clz5beuou0003sgob6qgjjvp9
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: www.google.com
+                        customSuffix: umpwv
+                        clicks: 0
+                        createdAt: "2024-07-28T08:45:27.390Z"
+                        updatedAt: "2024-07-28T08:45:27.390Z"
+                      - id: clz5bdhc70001sgobbg0dj8ls
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: www.google.com
+                        customSuffix: jXloa
+                        clicks: 0
+                        createdAt: "2024-07-28T08:44:23.430Z"
+                        updatedAt: "2024-07-28T08:44:23.430Z"
+                      - id: clz4ohf7f0007pk3hyuiedf55
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: "https://www.github.com"
+                        customSuffix: google1s11
+                        clicks: 0
+                        createdAt: "2024-07-27T22:03:36.123Z"
+                        updatedAt: "2024-07-27T22:04:45.798Z"
+                      - id: clz4isrkq000138rutk6eil90
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: "https://www.github.com"
+                        customSuffix: Pquwy
+                        clicks: 0
+                        createdAt: "2024-07-27T19:24:27.673Z"
+                        updatedAt: "2024-07-27T19:24:27.673Z"
+                      - id: clz3lutuy000egqknl28webbs
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: "https://www.github.com"
+                        customSuffix: qFPds
+                        clicks: 0
+                        createdAt: "2024-07-27T04:02:16.618Z"
+                        updatedAt: "2024-07-27T04:02:16.618Z"
+                      - id: clz3lrcdq000bgqknrtd5e0ft
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: "https://www.github.com"
+                        customSuffix: NvGfd
+                        clicks: 0
+                        createdAt: "2024-07-27T03:59:33.999Z"
+                        updatedAt: "2024-07-27T03:59:33.999Z"
+                      - id: clz3lqlmf0009gqknysubp962
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: "https://www.github.com"
+                        customSuffix: BeZxG
+                        clicks: 0
+                        createdAt: "2024-07-27T03:58:59.319Z"
+                        updatedAt: "2024-07-27T03:58:59.319Z"
+                      - id: clz3lod6g0007gqknriwbres3
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: "https://www.google.com"
+                        customSuffix: JSBVg
+                        clicks: 0
+                        createdAt: "2024-07-27T03:57:15.064Z"
+                        updatedAt: "2024-07-27T03:57:15.064Z"
+                      - id: clz3j9yqa00057mat5ku4xr29
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: "https://www.google.com"
+                        customSuffix: google
+                        clicks: 0
+                        createdAt: "2024-07-27T02:50:03.923Z"
+                        updatedAt: "2024-07-27T02:50:03.923Z"
+                      - id: clz3j8tuz00017matmu8a8wxh
+                        userId: clz0c0pzw0000cetc7zbaga21
+                        link: "https://www.facebook.com"
+                        customSuffix: facebook
+                        clicks: 0
+                        createdAt: "2024-07-27T02:49:10.907Z"
+                        updatedAt: "2024-07-27T02:49:10.907Z"
+                    pagination:
+                      page: 1
+                      limit: 10
+                      totalLinks: 18
+                      totalPages: 2
+                properties:
+                  success:
+                    type: boolean
+                  "data:":
+                    $ref: "#/components/schemas/Link"
+                    x-stoplight:
+                      id: i072r2oevgrsm
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalLinks:
+                        type: integer
+                      totalPages:
+                        type: integer
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+                required:
+                  - success
+                  - error
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: An unexpected error occurred
+      operationId: get-link
+      x-stoplight:
+        id: 43ac90vrghu7f
+      description: "Get all links created by authorized user\r\nAdditional query can be added to the request. \r\nPage defaults to 1 if not supplied \r\nlimit defaults to 25 if not supplied."
+      requestBody:
+        description: ""
+        content: {}
+      parameters:
+        - schema:
+            type: number
+            default: 1
+          in: query
+          name: page
+          description: page to navigate to
+        - schema:
+            type: number
+            default: 10
+          in: query
+          name: limit
+          description: number of item per page
+    post:
+      summary: Create link
+      tags:
+        - Link
+      responses:
+        "201":
+          description: Link Created
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: true
+                    data:
+                      id: clz5gqdl50001119jqd4logit
+                      userId: clz0c0pzw0000cetc7zbaga21
+                      link: www.google.com
+                      customSuffix: googaale
+                      clicks: 0
+                      createdAt: "2024-07-28T11:14:23.177Z"
+                      updatedAt: "2024-07-28T11:14:23.177Z"
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  data:
+                    $ref: "#/components/schemas/Link"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: invalid fields
+                required:
+                  - success
+                  - error
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+              examples: {}
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: custom suffix in use
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+                    default: custom suffix in use
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+      operationId: post-link
+      x-stoplight:
+        id: xxvdui3aqb4n8
+      description: "Only link field is required. \r\nAuthenticated and non authenticated user can create link\r\nCustom Suffix can only be supplied by authenticated user."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  link: www.google.com
+                  customSuffix: google
+              required:
+                - link
+              properties:
+                "":
+                  type: string
+                  x-stoplight:
+                    id: hduocvshpvp30
+                link:
+                  type: string
+                  description: The link to be shortened
+                customSuffix:
+                  type: string
+                  description: Suffix to redirect to link
+      security:
+        - {}
+        - apiKey_1: []
+  "/link/{linkId}":
+    patch:
+      summary: Patch Specific Link
+      tags:
+        - Link
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: true
+                    message: custom suffix changed successfully
+                properties:
+                  success:
+                    type: boolean
+                    default: true
+                  message:
+                    type: string
+                    default: custom suffix changed successfully
+              examples:
+                Example 1:
+                  value:
+                    success: true
+                    message: custom suffix changed successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    error: Invalid fields
+                properties:
+                  error:
+                    type: string
+                    default: Invalid fields
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+      operationId: patch-link
+      x-stoplight:
+        id: dds6yyczobl43
+      description: "Change the custom suffix  of a specific link.\r\nMethod can only be used by an authorized user"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  customSuffix: google1aas11
+              required:
+                - customSuffix
+              properties:
+                customSuffix:
+                  type: string
+                  description: "New suffix "
+      security:
+        - apiKey_1: []
+    parameters:
+      - schema:
+          type: string
+        in: path
+        name: linkId
+        description: the specific link id
+        required: true
+    get:
+      summary: Get Specific Link
+      tags:
+        - Link
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+      operationId: get-link-linkId
+      x-stoplight:
+        id: 5y2duljwnwf4l
+      description: Get specific link by linkid
+  /link/click:
+    patch:
+      summary: Patch Specific Link
+      tags:
+        - Link
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+      operationId: patch-link-click
+      x-stoplight:
+        id: 0a8qy4w2mw9l2
+      description: "increase click count on link visit "
+      requestBody:
+        description: Increase click count for specific link
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customSuffix:
+                  type: string
+                country:
+                  type: string
+              x-examples:
+                Example 1:
+                  customSuffix: string
+                  country: string
+  "/link/public/{customSuffix}":
+    parameters:
+      - schema:
+          type: string
+        name: customSuffix
+        in: path
+        required: true
+        description: "The custom suffix of a link "
+    get:
+      summary: Get Link
+      tags:
+        - Link
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: string
+                    x-stoplight:
+                      id: 919n4uco0u0v1
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+      operationId: get-link-public-customSuffix
+      x-stoplight:
+        id: vhzho2hteh151
+      description: Get the Link a user shortened
+  /link/top-countries:
+    get:
+      summary: Get User Top Countries
+      tags:
+        - Link
+        - Protected
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        country:
+                          type: string
+                        clicks:
+                          type: integer
+                x-examples:
+                  Example 1:
+                    success: true
+                    data:
+                      - country: France
+                        clicks: 21
+                      - country: Nigeria
+                        clicks: 10
+                      - country: Romania
+                        clicks: 8
+                      - country: The Netherlands
+                        clicks: 4
+                      - country: United States
+                        clicks: 1
+                      - country: Unknown
+                        clicks: 1
+              examples:
+                Example 1:
+                  value:
+                    success: true
+                    data:
+                      - country: France
+                        clicks: 21
+                      - country: Nigeria
+                        clicks: 10
+                      - country: Romania
+                        clicks: 8
+                      - country: The Netherlands
+                        clicks: 4
+                      - country: United States
+                        clicks: 1
+                      - country: Unknown
+                        clicks: 1
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+      operationId: get-link-top-countries
+      x-stoplight:
+        id: z353pw7pjbd3k
+      description: Get top countries accross all links created by user
+      security:
+        - apiKey_1: []
+  /user/stats:
+    get:
+      summary: Get User Stats
+      tags:
+        - User
+        - Protected
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      userId:
+                        type: string
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      totalLinksCreated:
+                        type: integer
+                      uniqueLinksCount:
+                        type: integer
+                      lastFiveLinks:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            link:
+                              type: string
+                            customSuffix:
+                              type: string
+                      topCountries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            country:
+                              type: string
+                            clickCount:
+                              type: integer
+                x-examples:
+                  Example 1:
+                    success: true
+                    data:
+                      userId: clz0c0pzw0000cetc7zbaga21
+                      email: 1@2.com
+                      name: trans
+                      totalLinksCreated: 50
+                      uniqueLinksCount: 11
+                      lastFiveLinks:
+                        - link: coolify.talut.tech
+                          customSuffix: ccool
+                        - link: coolify.talut.tech
+                          customSuffix: coolx
+                        - link: coolify.talut.tech
+                          customSuffix: uEpoz
+                        - link: coolify.talut.tech
+                          customSuffix: coolify
+                        - link: coolify.talut.tech
+                          customSuffix: "jg,rp3"
+                      topCountries:
+                        - country: France
+                          clickCount: 21
+                        - country: Nigeria
+                          clickCount: 10
+                        - country: Romania
+                          clickCount: 4
+                        - country: Romania
+                          clickCount: 4
+                        - country: The Netherlands
+                          clickCount: 4
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error:
+                    type: string
+                x-examples:
+                  Example 1:
+                    success: false
+                    error: Unauthorized
+      operationId: get-user-stats
+      x-stoplight:
+        id: uzcdfj0ewpvkk
+      description: "Get basic info about user which includes user infomation, last 5 links created , total number of link created etc"
+      security:
+        - apiKey_1: []
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        emailVerified:
+          type: "null"
+        role:
+          type: string
+        totalClicks:
+          type: integer
+        uniqueCountryCount:
+          type: integer
+      x-examples:
+        Example 1:
+          id: clz0c0pzw0000cetc7zbaga21
+          name: trans
+          email: 1@2.com
+          emailVerified: null
+          role: USER
+          totalClicks: 45
+          uniqueCountryCount: 7
+      description: Link Model Object
+    Link:
+      type: object
+      x-examples:
+        Example 1:
+          id: clz5beuou0003sgob6qgjjvp9
+          userId: clz0c0pzw0000cetc7zbaga21
+          link: www.google.com
+          customSuffix: umpwv
+          clicks: 0
+          createdAt: "2024-07-28T08:45:27.390Z"
+          updatedAt: "2024-07-28T08:45:27.390Z"
+      properties:
+        id:
+          type: string
+        userId:
+          enum:
+            - string
+            - null
+        link:
+          type: string
+        customSuffix:
+          type: string
+        clicks:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+  securitySchemes:
+    apiKey_1:
+      type: http
+      scheme: bearer
+      description: Access token for authenticated user
+  responses: {}
+security:
+  - {}
+  - apiKey_1: []
