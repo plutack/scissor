@@ -1,4 +1,4 @@
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 import { db } from "@/lib/db";
 import { shortenLinkSchema, changeCustomSuffixSchema } from "@/schemas";
 import { z } from "zod";

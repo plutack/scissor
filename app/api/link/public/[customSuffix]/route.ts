@@ -1,5 +1,5 @@
 import * as linkService from "@/services/link-service";
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 import rateLimitIP from "@/utils/rate-limit";
 
 export async function GET(
@@ -26,6 +26,9 @@ export async function GET(
         { status: error.status },
       );
     }
-    return Response.json({ success: false, message: "Error fetching link" }, { status: 500 });
+    return Response.json(
+      { success: false, message: "Error fetching link" },
+      { status: 500 },
+    );
   }
 }

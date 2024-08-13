@@ -1,6 +1,4 @@
-// components/recent-links.tsx
 "use client";
-
 import React from "react";
 import { Link1Icon, ArrowRightIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
@@ -9,7 +7,6 @@ interface LinkData {
   link: string;
   customSuffix: string;
 }
-
 interface RecentLinksProps {
   links: LinkData[];
 }

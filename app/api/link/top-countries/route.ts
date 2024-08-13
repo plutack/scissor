@@ -1,5 +1,5 @@
 import { getUserIdFromRequest } from "@/utils/auth";
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 import * as linkService from "@/services/link-service";
 import rateLimitIP from "@/utils/rate-limit";
 
@@ -17,7 +17,10 @@ export async function GET(request: Request) {
     );
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
-      return Response.json({ success: false, error: error.message }, { status: error.status });
+      return Response.json(
+        { success: false, error: error.message },
+        { status: error.status },
+      );
     }
     return Response.json(
       { success: false, error: "An unexpected error occurred" },

@@ -1,4 +1,3 @@
-// In your columns.ts file
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "@/components/tables/link-table/cell-action";
 

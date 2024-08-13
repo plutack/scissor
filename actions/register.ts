@@ -1,7 +1,5 @@
 import { registerSchema } from "@/schemas";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
-import { db } from "@/lib/db";
 import ky, { HTTPError } from "ky";
 
 interface ErrorMessage {
@@ -13,7 +11,7 @@ export const register = async (
   values: z.infer<typeof registerSchema>,
 ): Promise<ErrorMessage> => {
   try {
-    const data = await ky
+    await ky
       .post("/api/auth/register", {
         json: values,
       })

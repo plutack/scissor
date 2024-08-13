@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { shortenLinkSchema } from "@/schemas";
 import isCustomSuffixInUse from "@/utils/check-custom-suffix";
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 
 const generateUniqueLink = async ({
   link,

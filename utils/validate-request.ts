@@ -1,5 +1,5 @@
 import { z, ZodObject } from "zod";
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 
 export const validateWithSchema = async <T extends ZodObject<any>>(
   request: Request,

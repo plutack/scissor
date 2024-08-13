@@ -1,4 +1,4 @@
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 import { db } from "@/lib/db";
 
 export const getUserStats = async (userId: string) => {
@@ -71,6 +71,9 @@ export const getUserStats = async (userId: string) => {
     return stats;
   } catch (error) {
     console.error("Error fetching user stats:", error);
-    throw new ErrorWithStatus("An error occurred while fetching user stats", 500);
+    throw new ErrorWithStatus(
+      "An error occurred while fetching user stats",
+      500,
+    );
   }
 };

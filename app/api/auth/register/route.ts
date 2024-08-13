@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { findUserByEmail } from "@/data/user";
 import rateLimitIP from "@/utils/rate-limit";
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 
 export async function POST(request: Request) {
   try {

@@ -1,7 +1,7 @@
 import { changeCustomSuffixSchema } from "@/schemas";
 import { getUserIdFromRequest } from "@/utils/auth";
 import * as linkService from "@/services/link-service";
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 import { validateWithSchema } from "@/utils/validate-request";
 import rateLimitIP from "@/utils/rate-limit";
 

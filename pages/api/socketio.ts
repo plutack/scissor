@@ -2,16 +2,12 @@ import { Server as ServerIO } from "socket.io";
 import * as userService from "../../services/user-service";
 import { NextApiResponseServerIo } from "@/types/socketio";
 import { NextApiRequest } from "next";
-import { Server as NetServer } from "http";
-import { getUserIdFromRequest } from "@/utils/auth";
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-// pages/api/socketio.ts
 
 const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
   console.log("ioHandler called");

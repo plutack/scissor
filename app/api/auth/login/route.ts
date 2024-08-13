@@ -5,7 +5,7 @@ import { AuthError } from "next-auth";
 import { cookies } from "next/headers";
 import sanitizeUser from "@/utils/sanitize-user";
 import rateLimitIP from "@/utils/rate-limit";
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 
 export async function POST(request: Request, response: Response) {
   try {

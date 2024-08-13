@@ -1,10 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { columns } from "./columns";
 import { ShortenLinkButton } from "@/components/forms/shorten-link-button-form";
@@ -15,7 +13,6 @@ interface Link {
   customSuffix: string;
   clicks: number;
 }
-
 interface LinkProps {
   data: Link[];
   pagination: {
@@ -39,7 +36,6 @@ export const LinkClient: React.FC<LinkProps> = ({
     // TODO Navigate to the link details page or perform any action
     router.push(`/dashboard/link/${row.customSuffix}`);
   };
-
   return (
     <>
       <div className="flex items-start justify-between">

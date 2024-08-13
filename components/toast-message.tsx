@@ -6,14 +6,12 @@ interface ApiResponse {
   success: boolean;
   message: string;
 }
-
 interface CustomToastProps {
   response: ApiResponse;
 }
 
 export const CustomToast: React.FC<CustomToastProps> = ({ response }) => {
   const { toast } = useToast();
-
   const showToast = React.useCallback(() => {
     toast({
       variant: response.success ? "default" : "destructive",

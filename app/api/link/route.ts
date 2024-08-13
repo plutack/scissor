@@ -3,7 +3,7 @@ import { getUserIdFromRequest } from "@/utils/auth";
 import { shortenLinkSchema } from "@/schemas";
 import generateUniqueLink from "@/utils/generate-suffix";
 import * as linkService from "@/services/link-service";
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 import rateLimitIP from "@/utils/rate-limit";
 
 export async function GET(request: Request) {

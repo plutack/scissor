@@ -1,4 +1,3 @@
-// utils/sanitizeUser.ts
 import { PrismaClient } from "@prisma/client";
 import { User } from "@prisma/client";
 

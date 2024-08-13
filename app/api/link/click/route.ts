@@ -1,4 +1,4 @@
-import ErrorWithStatus from "@/Exception/custom-error";
+import ErrorWithStatus from "@/exception/custom-error";
 import * as linkService from "@/services/link-service";
 import rateLimitIP from "@/utils/rate-limit";
 

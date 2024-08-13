@@ -1,4 +1,3 @@
-// hooks/useDashboardData.ts
 import { useState, useEffect } from 'react';
 import { useSocket } from '@/components/layout/socket-provider';
 import { DashboardData } from "@/types/dashboard";

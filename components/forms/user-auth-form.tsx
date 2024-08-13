@@ -13,9 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, registerSchema } from "@/schemas";
-import { useSearchParams } from "next/navigation";
 import React, { ReactNode, useState } from "react";
-
 import { login } from "@/actions/login";
 import { register } from "@/actions/register";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";

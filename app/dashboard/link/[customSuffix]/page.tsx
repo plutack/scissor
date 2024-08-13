@@ -55,7 +55,7 @@ interface ApiResponse {
 }
 
 export default function LinkAnalyticsPage() {
-  // TODO Mock API response data
+  // TODO replace API response data
   const apiResponse: ApiResponse = {
     success: true,
     data: {
