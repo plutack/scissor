@@ -37,6 +37,8 @@
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@uploadthing/react": "^5.7.0",
+    "@upstash/ratelimit": "^2.0.1",
+    "@upstash/redis": "^1.34.0",
     "autoprefixer": "10.4.15",
     "bcryptjs": "^2.4.3",
     "buffer": "^6.0.3",
