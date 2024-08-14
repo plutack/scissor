@@ -20,12 +20,6 @@ export const navItems: NavItem[] = [
     icon: "link",
     label: "link",
   },
-  {
-    title: "Profile",
-    href: "/dashboard/profile",
-    icon: "profile",
-    label: "profile",
-  },
 ];
 
 export const reservedSuffixes = [
