@@ -24,6 +24,7 @@
     ```sh
     cp .env.sample .env
     ```
+
 3. Run locally.
 
     ```sh
@@ -32,6 +33,11 @@
     npx prisma migrate dev
     npm run dev
     ```
+  
+4. Run test locally
+   ```sh
+   npm run test:coverage
+   ```
 
 ## Key Frontend Routes
 - Unprotected

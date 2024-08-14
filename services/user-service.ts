@@ -71,6 +71,9 @@ export const getUserStats = async (userId: string) => {
     return stats;
   } catch (error) {
     console.error("Error fetching user stats:", error);
+    if (error instanceof ErrorWithStatus) {
+      throw error;
+    }
     throw new ErrorWithStatus(
       "An error occurred while fetching user stats",
       500,

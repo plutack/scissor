@@ -1,5 +1,4 @@
 import { registerSchema } from "@/schemas";
-import * as z from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { findUserByEmail } from "@/data/user";
