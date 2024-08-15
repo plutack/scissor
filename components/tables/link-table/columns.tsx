@@ -4,6 +4,7 @@ import { CellAction } from "@/components/tables/link-table/cell-action";
 const renderDashForNull = (value: any) => value ?? "-";
 
 export type Link = {
+  id: string;
   name: string;
   link: string;
   customSuffix: string;

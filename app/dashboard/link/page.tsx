@@ -5,6 +5,7 @@ import PageContainer from "@/components/layout/page-container";
 import { LinkClient } from "@/components/tables/link-table/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const breadcrumbItems = [
   { title: "Dashboard", link: "/dashboard" },
@@ -37,16 +38,21 @@ export default function Page() {
       setPage(page - 1);
     }
   };
-// TODO change to lucide spinner
-  if (isLoading) return <div>Loading...</div>;
+
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   if (isError) return <div>Error fetching links</div>;
 
   return (
     <PageContainer>
       <div className="space-y-2">
         <Breadcrumbs items={breadcrumbItems} />
-        <LinkClient 
-          data={data.data} 
+        <LinkClient
+          data={data.data}
           pagination={data.pagination}
           onNextPage={handleNextPage}
           onPreviousPage={handlePreviousPage}

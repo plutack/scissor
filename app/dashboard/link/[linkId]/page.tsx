@@ -1,5 +1,5 @@
 "use client";
-
+import { notFound } from "next/navigation";
 import { DashboardTopCountriesChart } from "@/components/charts/dashboard-top-countries-chart";
 import PageContainer from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MousePointerClickIcon, FlagIcon } from "lucide-react";
+import { MousePointerClickIcon, FlagIcon, Loader2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -22,6 +22,9 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import fetchLinkData from "@/utils/fetchData";
+import { useParams } from "next/navigation";
+import { useQuery, QueryFunction } from "@tanstack/react-query";
 
 interface LinkData {
   id: string;
@@ -55,76 +58,30 @@ interface ApiResponse {
 }
 
 export default function LinkAnalyticsPage() {
-  // TODO replace API response data
-  const apiResponse: ApiResponse = {
-    success: true,
-    data: {
-      link: {
-        id: "clz3j9yqa00057mat5ku4xr29",
-        name: null,
-        customSuffix: "google",
-        createdAt: "2024-07-27T02:50:03.923Z",
-        updatedAt: "2024-08-11T10:39:45.207Z",
-        clicks: 41,
-      },
-      totalVisits: 41,
-      uniqueCountriesCount: 6,
-      top5Countries: [
-        {
-          country: "France",
-          clickCount: 21,
-        },
-        {
-          country: "Nigeria",
-          clickCount: 10,
-        },
-        {
-          country: "The Netherlands",
-          clickCount: 4,
-        },
-        {
-          country: "Romania",
-          clickCount: 4,
-        },
-        {
-          country: "United States",
-          clickCount: 1,
-        },
-      ],
-      countryStats: [
-        {
-          country: "France",
-          count: 21,
-          percentage: "51.22",
-        },
-        {
-          country: "Nigeria",
-          count: 10,
-          percentage: "24.39",
-        },
-        {
-          country: "The Netherlands",
-          count: 4,
-          percentage: "9.76",
-        },
-        {
-          country: "Romania",
-          count: 4,
-          percentage: "9.76",
-        },
-        {
-          country: "United States",
-          count: 1,
-          percentage: "2.44",
-        },
-        {
-          country: "Unknown",
-          count: 1,
-          percentage: "2.44",
-        },
-      ],
-    },
-  };
+  const params = useParams();
+  const linkId = params!.linkId as string;
+
+  const queryFn: QueryFunction<ApiResponse> = () =>
+    fetchLinkData(`/api/link/${linkId}`) as Promise<ApiResponse>;
+  const {
+    data: apiResponse,
+    isLoading,
+    error,
+  } = useQuery<ApiResponse, Error>({
+    queryKey: ["link", linkId],
+    queryFn,
+  });
+
+  //TODO: spinner
+  if (isLoading)
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin" />
+      </div>
+    );
+
+  //TODO: error handling
+  if (error) return notFound();
 
   const {
     link,
@@ -132,7 +89,7 @@ export default function LinkAnalyticsPage() {
     uniqueCountriesCount,
     top5Countries,
     countryStats,
-  } = apiResponse.data;
+  } = apiResponse!.data;
 
   const calculatedAverage = Math.floor(link.clicks / uniqueCountriesCount);
 

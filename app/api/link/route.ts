@@ -15,8 +15,8 @@ export async function GET(request: Request) {
     }
 
     const url = new URL(request.url);
-    const response = await linkService.getAllLinks(url, userId);
-    return Response.json(response);
+    const { links, pagination } = await linkService.getAllLinks(url, userId);
+    return Response.json({ success: true, data: links, pagination });
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       return Response.json(

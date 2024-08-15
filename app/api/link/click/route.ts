@@ -18,7 +18,7 @@ export async function PATCH(request: Request) {
     return Response.json({ status: 204 });
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
-      console.error("Error updating link click:", error); // TODO properly log error
+      console.log("Error updating link click:", error);
       return Response.json(
         { success: false, error: error.message },
         { status: error.status },

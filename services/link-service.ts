@@ -43,8 +43,7 @@ export const getAllLinks = async (url: URL, userId: string) => {
     const totalPages = Math.ceil(totalLinks / limit);
 
     return {
-      success: true,
-      data: links,
+      links,
       pagination: {
         page,
         limit,

@@ -8,6 +8,7 @@ import { columns } from "./columns";
 import { ShortenLinkButton } from "@/components/forms/shorten-link-button-form";
 
 interface Link {
+  id: string;
   name: string;
   link: string;
   customSuffix: string;
@@ -34,7 +35,7 @@ export const LinkClient: React.FC<LinkProps> = ({
   const router = useRouter();
   const handleRowClick = (row: Link) => {
     // TODO Navigate to the link details page or perform any action
-    router.push(`/dashboard/link/${row.customSuffix}`);
+    router.push(`/dashboard/link/${row.id}`);
   };
   return (
     <>
