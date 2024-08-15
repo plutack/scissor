@@ -6,6 +6,6 @@ export default function handler(
 ) {
   response.status(200).json({
     message: "Please visit /api-docs for available routes and documentation.",
-    docsUrl: `${process.env.COOLIFY_URL}/api-docs`,
+    docsUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api-docs`,
   });
 }

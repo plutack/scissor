@@ -22,7 +22,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
         path: "/api/socketio",
         addTrailingSlash: false,
         cors: {
-          origin: process.env.COOLIFY_URL,
+          origin: process.env.NEXT_PUBLIC_BASE_URL,
           credentials: true,
         },
       });
