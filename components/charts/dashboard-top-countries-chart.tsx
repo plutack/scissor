@@ -22,6 +22,8 @@ interface TopCountry {
 
 interface DashboardTopCountriesChartProps {
   data: TopCountry[];
+  title: string;
+  description: string;
 }
 
 const chartConfig = {
@@ -32,15 +34,17 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 // TODO: export as a chart?
-export function DashboardTopCountriesChart({ data }: DashboardTopCountriesChartProps) {
+export function DashboardTopCountriesChart({
+  data,
+  title,
+  description,
+}: DashboardTopCountriesChartProps) {
   return (
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>Top 5 Countries by Clicks</CardTitle>
-          <CardDescription>
-            Showing countries with the most clicks across all links
-          </CardDescription>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
@@ -79,7 +83,7 @@ export function DashboardTopCountriesChart({ data }: DashboardTopCountriesChartP
             </BarChart>
           </ChartContainer>
         ) : (
-          <div className="flex items-center justify-center h-[280px]">
+          <div className="flex items-center justify-center h-[280px] text-center text-muted-foreground">
             Not enough data to display chart
           </div>
         )}

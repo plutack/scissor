@@ -65,7 +65,11 @@ export default function DashboardPage() {
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
           <div className="col-span-4">
-            <DashboardTopCountriesChart data={data.topCountries} />
+            <DashboardTopCountriesChart
+              data={data.topCountries}
+              title="Top Country Clicks"
+              description="Showing countries with the most clicks across all links"
+            />
           </div>
           <Card className="col-span-4 md:col-span-3">
             <CardHeader>
