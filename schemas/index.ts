@@ -12,12 +12,52 @@ export const registerSchema = z
   .object({
     name: z.string().min(1, { message: "Name is required" }),
     email: z.string().email({ message: "Email is required" }),
-    password: z.string().min(1, { message: "Password is required" }), // TODO: Enforce strong password
-    confirmPassword: z.string().min(1, { message: "Password is required" }),
+    password: z.string(),
+    confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
+  .superRefine((data, ctx) => {
+    if (data.password.length < 8) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Password must be at least 8 characters long",
+        path: ["password"],
+      });
+    }
+    if (!/[a-z]/.test(data.password)) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Password must contain at least one lowercase letter",
+        path: ["password"],
+      });
+    }
+    if (!/[A-Z]/.test(data.password)) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Password must contain at least one uppercase letter",
+        path: ["password"],
+      });
+    }
+    if (!/\d/.test(data.password)) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Password must contain at least one number",
+        path: ["password"],
+      });
+    }
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(data.password)) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Password must contain at least one special character",
+        path: ["password"],
+      });
+    }
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Passwords don't match",
+        path: ["confirmPassword"],
+      });
+    }
   });
 
 export const shortenLinkSchema = z.object({
