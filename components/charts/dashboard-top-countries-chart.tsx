@@ -33,7 +33,6 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-// TODO: export as a chart?
 export function DashboardTopCountriesChart({
   data,
   title,
