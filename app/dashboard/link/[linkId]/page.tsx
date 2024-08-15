@@ -72,7 +72,6 @@ export default function LinkAnalyticsPage() {
     queryFn,
   });
 
-  //TODO: spinner
   if (isLoading)
     return (
       <div className="flex h-full items-center justify-center">
@@ -80,7 +79,6 @@ export default function LinkAnalyticsPage() {
       </div>
     );
 
-  //TODO: error handling
   if (error) return notFound();
 
   const {

@@ -2,8 +2,6 @@ import Header from '@/components/layout/header';
 import Sidebar from '@/components/layout/sidebar';
 import type { Metadata } from 'next';
 
-// TODO remove unused imports
-
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "User dashboard",

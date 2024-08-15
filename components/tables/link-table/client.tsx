@@ -34,7 +34,6 @@ export const LinkClient: React.FC<LinkProps> = ({
 }) => {
   const router = useRouter();
   const handleRowClick = (row: Link) => {
-    // TODO Navigate to the link details page or perform any action
     router.push(`/dashboard/link/${row.id}`);
   };
   return (

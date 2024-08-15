@@ -19,7 +19,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // TODO session doesnt load on first load
   const session = await auth();
   console.log("session", session);
   return (

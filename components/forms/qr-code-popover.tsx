@@ -45,7 +45,7 @@ export function QRCodePopover({ shortUrl, onClose }: QRCodePopoverProps) {
           ctx?.drawImage(img, 0, 0);
           canvas.toBlob((blob) => {
             if (blob) {
-              saveAs(blob, "qrcode.png"); // TODO: add custom name
+              saveAs(blob, "qrcode.png");
             }
           });
         };
