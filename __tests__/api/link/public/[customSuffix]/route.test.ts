@@ -39,7 +39,7 @@ describe('GET function', () => {
     const result = await response.json();
 
     expect(response.status).toBe(404);
-    expect(result).toEqual({ success: false, message: 'Link not found' });
+    expect(result).toEqual({ success: false, error: 'Link not found' });
   });
 
   it('should handle rate limit errors', async () => {
@@ -52,7 +52,7 @@ describe('GET function', () => {
     const result = await response.json();
 
     expect(response.status).toBe(429);
-    expect(result).toEqual({ success: false, message: 'Rate limit exceeded' });
+    expect(result).toEqual({ success: false, error: 'Rate limit exceeded' });
   });
 
   it('should handle unexpected errors', async () => {

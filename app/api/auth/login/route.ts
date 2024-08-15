@@ -28,6 +28,7 @@ export async function POST(request: Request, response: Response) {
     const user = await sanitizeUser(email);
 
     const accessToken = cookies().get("authjs.session-token")?.value;
+    console.log("accessToken", accessToken);
     return Response.json({
       success: true,
       accessToken,

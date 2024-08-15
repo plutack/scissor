@@ -81,6 +81,6 @@ describe('PATCH function', () => {
     const result = await response.json();
 
     expect(response.status).toBe(500);
-    expect(result).toEqual({ message: 'Error updating link click' });
+    expect(result).toEqual({ success: false, error: 'Error updating link click' });
   });
 });

@@ -22,7 +22,7 @@ export async function GET(
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       return Response.json(
-        { success: false, message: error.message },
+        { success: false, error: error.message },
         { status: error.status },
       );
     }

@@ -29,7 +29,7 @@ export async function PATCH(request: Request) {
       );
     }
     return Response.json(
-      { message: "Error updating link click" },
+      { success: false, error: "Error updating link click" },
       { status: 500 },
     );
   }
