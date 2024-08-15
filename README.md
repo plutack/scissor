@@ -39,6 +39,47 @@
    npm run test:coverage
    ```
 
+## Test Results
+| File                       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s |
+| -------------------------- | ------- | -------- | ------- | ------- | ----------------- |
+| All files                  | 97.26   | 84.21    | 94.44   | 97.32   |                   |
+| link-slice                 | 100     | 100      | 100     | 100     |                   |
+| routes.ts                  | 100     | 100      | 100     | 100     |                   |
+| ...lice/app/api/auth/login | 100     | 85.71    | 100     | 100     |                   |
+| route.ts                   | 100     | 85.71    | 100     | 100     | 30                |
+| ...e/app/api/auth/register | 100     | 100      | 100     | 100     |                   |
+| route.ts                   | 100     | 100      | 100     | 100     |                   |
+| link-slice/app/api/link    | 93.54   | 100      | 100     | 93.54   |                   |
+| route.ts                   | 93.54   | 100      | 100     | 93.54   | 27,57             |
+| ...e/app/api/link/[linkId] | 100     | 100      | 100     | 100     |                   |
+| route.ts                   | 100     | 100      | 100     | 100     |                   |
+| ...lice/app/api/link/click | 100     | 100      | 100     | 100     |                   |
+| route.ts                   | 100     | 100      | 100     | 100     |                   |
+| ...k/public/[customSuffix] | 100     | 100      | 100     | 100     |                   |
+| route.ts                   | 100     | 100      | 100     | 100     |                   |
+| .../api/link/top-countries | 100     | 100      | 100     | 100     |                   |
+| route.ts                   | 100     | 100      | 100     | 100     |                   |
+| ...lice/app/api/user/stats | 100     | 100      | 100     | 100     |                   |
+| route.ts                   | 100     | 100      | 100     | 100     |                   |
+| link-slice/constants       | 100     | 100      | 100     | 100     |                   |
+| data.ts                    | 100     | 100      | 100     | 100     |                   |
+| link-slice/exception       | 100     | 100      | 100     | 100     |                   |
+| custom-error.ts            | 100     | 100      | 100     | 100     |                   |
+| link-slice/lib             | 100     | 100      | 100     | 100     |                   |
+| db.ts                      | 100     | 100      | 100     | 100     |                   |
+| link-slice/schemas         | 85.71   | 100      | 0       | 85.71   |                   |
+| index.ts                   | 85.71   | 100      | 0       | 85.71   | 18                |
+| link-slice/services        | 99.15   | 83.33    | 100     | 98.94   |                   |
+| link-service.ts            | 98.78   | 80       | 100     | 98.43   | 21                |
+| user-service.ts            | 100     | 100      | 100     | 100     |                   |
+| link-slice/utils           | 88.46   | 44.44    | 75      | 89.58   |                   |
+| check-custom-suffix.ts     | 100     | 100      | 100     | 100     |                   |
+| generate-suffix.ts         | 100     | 100      | 100     | 100     |                   |
+| rate-limit.ts              | 50      | 0        | 0       | 54.54   | 11-16             |
+| validate-request.ts        | 100     | 100      | 100     | 100     |                   |
+
+
+
 ## Key Frontend Routes
 - Unprotected
   - / - Sign In/Register page. This page also allows unauthorized users to create short links. 
