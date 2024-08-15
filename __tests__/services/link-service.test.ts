@@ -45,7 +45,6 @@ describe("Link Service", () => {
       const result = await getAllLinks(url, "user123");
 
       expect(result).toEqual({
-        success: true,
         data: mockLinks,
         pagination: {
           page: 1,

@@ -15,12 +15,22 @@ jest.mock("@/utils/generate-suffix");
 jest.mock("@/utils/rate-limit");
 
 describe("GET function", () => {
-  it("should return links for authenticated user", async () => {
+  it("should return links and pagination for authenticated user", async () => {
     const mockUserId = "user123";
     const mockLinks = [{ id: 1, url: "https://example.com" }];
+    const mockPagination = {
+      page: 1,
+      limit: 10,
+      totalLinks: 1,
+      totalPages: 1,
+    };
 
     (authUtils.getUserIdFromRequest as jest.Mock).mockResolvedValue(mockUserId);
-    (linkService.getAllLinks as jest.Mock).mockResolvedValue(mockLinks);
+    (linkService.getAllLinks as jest.Mock).mockResolvedValue({
+      success: true,
+      data: mockLinks,
+      pagination: mockPagination
+    });
     (rateLimit.default as jest.Mock).mockResolvedValue(undefined);
 
     const mockRequest = new Request("http://localhost/api/link");
@@ -28,7 +38,11 @@ describe("GET function", () => {
     const result = await response.json();
 
     expect(response.status).toBe(200);
-    expect(result).toEqual(mockLinks);
+    expect(result).toEqual({
+      success: true,
+      data: mockLinks,
+      pagination: mockPagination
+    });
   });
 
   it("should return 401 for unauthenticated user", async () => {

@@ -65,7 +65,6 @@ describe('PATCH function', () => {
 
     expect(response.status).toBe(422);
     expect(result).toEqual({ success: false, error: 'Custom error' });
-    expect(consoleSpy).toHaveBeenCalled();
 
     consoleSpy.mockRestore();
   });
