@@ -2,7 +2,7 @@ import { loginSchema } from "@/schemas";
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { cookies } from "next/headers";
-import sanitizeUser from "@/utils/sanitize-user";
+import { sanitizeUser } from "@/services/user-service";
 import rateLimitIP from "@/utils/rate-limit";
 import ErrorWithStatus from "@/exception/custom-error";
 import { AuthError } from "next-auth";

@@ -1,5 +1,6 @@
 import ErrorWithStatus from "@/exception/custom-error";
 import { db } from "@/lib/db";
+import { User } from "@prisma/client";
 
 export const getUserStats = async (userId: string) => {
   try {
@@ -87,4 +88,21 @@ export const getUserByEmail = async (email: string) => {
   } catch {
     return null;
   }
+};
+
+export const sanitizeUser = async (
+  email: string,
+): Promise<Omit<User, "password" | "image"> | null> => {
+  const userData = await db.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!userData) {
+    return null;
+  }
+
+  const { password, image, ...user } = userData;
+  return user;
 };

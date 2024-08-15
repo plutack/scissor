@@ -2,7 +2,7 @@ import { POST } from "@/app/api/auth/login/route";
 import { loginSchema } from "@/schemas";
 import { signIn } from "@/auth";
 import { cookies } from "next/headers";
-import sanitizeUser from "@/utils/sanitize-user";
+import { sanitizeUser } from "@/services/user-service";
 import rateLimitIP from "@/utils/rate-limit";
 import ErrorWithStatus from "@/exception/custom-error";
 import { AuthError } from "next-auth";
@@ -19,8 +19,9 @@ jest.mock("@/auth", () => ({
 jest.mock("next/headers", () => ({
   cookies: jest.fn(),
 }));
-jest.mock("@/utils/sanitize-user", () => jest.fn());
-jest.mock("@/utils/rate-limit", () => jest.fn());
+jest.mock("@/services/user-service", () => ({
+  sanitizeUser: jest.fn(),
+}));
 jest.mock("@/utils/rate-limit", () => ({
   __esModule: true,
   default: jest.fn().mockResolvedValue(undefined),
