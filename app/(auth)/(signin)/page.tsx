@@ -60,9 +60,6 @@ export default function HomePage() {
       <div className="flex flex-col overflow-y-auto">
         <div className="min-h-full flex flex-col items-center justify-center p-4 lg:p-8 overflow-y-auto">
           <div className="flex flex-col space-y-2 text-center mb-6">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Create an account
-            </h1>
             <p className="text-sm text-muted-foreground">
               Sign up to access advanced features like custom domains, QR codes,
               and analytics
