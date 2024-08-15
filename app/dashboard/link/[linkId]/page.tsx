@@ -89,7 +89,10 @@ export default function LinkAnalyticsPage() {
     countryStats,
   } = apiResponse!.data;
 
-  const calculatedAverage = Math.floor(link.clicks / uniqueCountriesCount);
+  const calculatedAverage =
+    uniqueCountriesCount > 0
+      ? Math.floor(link.clicks / uniqueCountriesCount)
+      : 0;
 
   const handleDownloadReport = () => {
     const csvContent = [
@@ -183,14 +186,13 @@ export default function LinkAnalyticsPage() {
               </Card>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4">
-                <CardHeader>
-                  <CardTitle>Top 5 Countries</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <DashboardTopCountriesChart data={top5Countries} />
-                </CardContent>
-              </Card>
+              <div className="col-span-4">
+                <DashboardTopCountriesChart
+                  data={top5Countries}
+                  title="Top 5 Countries"
+                  description="Showing countries with the most clicks"
+                />
+              </div>
               <Card className="col-span-4 md:col-span-3">
                 <CardHeader>
                   <CardTitle>Country Distribution</CardTitle>
@@ -239,6 +241,16 @@ function CountryStatsTable({ countryStats }: CountryStatsTableProps) {
     key: keyof StatsData;
     direction: "ascending" | "descending";
   }>({ key: "count", direction: "descending" });
+
+  if (countryStats.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-[200px]">
+        <p className="text-center text-muted-foreground">
+          No data available. The link may not have been used yet.
+        </p>
+      </div>
+    );
+  }
 
   const sortedStats = [...countryStats].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
