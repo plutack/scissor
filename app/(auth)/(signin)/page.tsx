@@ -51,33 +51,29 @@ export default function HomePage() {
               &ldquo;Scissor has revolutionized our marketing campaigns. The
               custom URLs and analytics features are game-changers!&rdquo;
             </p>
-            <footer className="text-sm">- Marketing Director, Talut Tech</footer>
+            <footer className="text-sm">
+              - Marketing Director, Talut Tech
+            </footer>
           </blockquote>
         </div>
       </div>
       <div className="flex flex-col overflow-y-auto">
         <div className="min-h-full flex flex-col items-center justify-center p-4 lg:p-8 overflow-y-auto">
+          <div className="flex flex-col space-y-2 text-center mb-6">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Create an account
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Sign up to access advanced features like custom domains, QR codes,
+              and analytics
+            </p>
+          </div>
           <div className="w-full max-w-md mb-8">
             <h2 className="text-2xl font-bold mb-4">Shorten Your URL</h2>
             <HomeShortenLinkForm />
           </div>
           <div className="w-full max-w-md">
-            <div className="flex flex-col space-y-2 text-center mb-6">
-              <h1 className="text-2xl font-semibold tracking-tight">
-                Create an account
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Sign up to access advanced features like custom domains, QR
-                codes, and analytics
-              </p>
-            </div>
             <UserAuthForm />
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/login" className="text-primary hover:underline">
-                Log in
-              </Link>
-            </p>
           </div>
         </div>
       </div>

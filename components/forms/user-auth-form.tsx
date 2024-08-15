@@ -19,6 +19,7 @@ import { register } from "@/actions/register";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { FormSuccess } from "@/components/form-success";
 import { FormError } from "@/components/form-error";
+import { KeySquare } from "lucide-react";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -44,6 +45,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
 
   return (
     <Form {...form}>
+      <div className="flex items-center justify-center">
+        <KeySquare className="w-6 h-6 mr-2" />
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Sign in to your account
+        </h2>
+      </div>
       <form
         onSubmit={form.handleSubmit(onSubmit as SubmitHandler<LoginFormValues>)}
         className="w-full space-y-2"
@@ -106,6 +113,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 
   return (
     <Form {...form}>
+      <div className="flex items-center justify-center">
+        <KeySquare className="w-6 h-6 mr-2" />
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Create an account
+        </h2>
+      </div>
       <form
         onSubmit={form.handleSubmit(
           onSubmit as SubmitHandler<RegisterFormValues>,
