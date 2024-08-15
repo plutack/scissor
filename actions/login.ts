@@ -10,7 +10,7 @@ export const login = async (
   values: z.infer<typeof loginSchema>,
 ): Promise<ErrorMessage> => {
   try {
-    const data = await ky
+    await ky
       .post("/api/auth/login", {
         json: values,
       })
