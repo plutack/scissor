@@ -11,6 +11,7 @@
 - [Node.js v20.15.1 ](https://nodejs.org/en)
 - [Socket.io](https://socket.io)
 - [Redis](https://redis.io)
+- [coolify](https://coolify.io)
 
 ## Getting Started
 1. Clone repo locally.
