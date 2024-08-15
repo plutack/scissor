@@ -7,7 +7,7 @@ const nextConfig = {
           headers: [
             {
               key: 'Host',
-              value: 'scissors.talut.tech',
+              value: 'scissor.talut.tech',
             },
           ],
         },
