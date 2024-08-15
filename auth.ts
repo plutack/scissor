@@ -58,7 +58,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         session.user.totalClicks = token.totalClicks;
         session.user.uniqueCountryCount = token.uniqueCountryCount; 
         session.user.totalLinksCount = token.totalLinksCount;
-        console.log(session.user.totalLinksCount);
       }
       
       const { id, ...restOfUser } = session.user;

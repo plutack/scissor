@@ -1,6 +1,9 @@
 import ErrorWithStatus from "@/exception/custom-error";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import logger from "@/lib/logger";
+
+const log = logger.child({ util: "Rate-limit" });
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -8,6 +11,7 @@ const ratelimit = new Ratelimit({
 });
 
 const rateLimitIP = async (request: Request) => {
+  log.info("Rate limit check");
   const ip = request.headers.get("x-forwarded-for") ?? "";
   const { success } = await ratelimit.limit(ip);
   if (!success) {

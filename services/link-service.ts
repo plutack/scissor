@@ -3,9 +3,12 @@ import { db } from "@/lib/db";
 import { shortenLinkSchema, changeCustomSuffixSchema } from "@/schemas";
 import { z } from "zod";
 import isCustomSuffixInUse from "@/utils/check-custom-suffix";
+import logger from "@/lib/logger";
+
+const log = logger.child({ service: "link-service" });
 
 export const getAllLinks = async (url: URL, userId: string) => {
-  // Parse pagination parameters from query string
+  log.info("Fetching all links called");
   const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10));
   const limit = Math.min(
     25,
@@ -20,7 +23,7 @@ export const getAllLinks = async (url: URL, userId: string) => {
   if (name) {
     whereClause.name = {
       contains: name,
-      mode: "insensitive", // Case-insensitive search
+      mode: "insensitive",
     };
   }
 
@@ -43,7 +46,7 @@ export const getAllLinks = async (url: URL, userId: string) => {
     const totalPages = Math.ceil(totalLinks / limit);
 
     return {
-      data:links,
+      data: links,
       pagination: {
         page,
         limit,
@@ -52,7 +55,7 @@ export const getAllLinks = async (url: URL, userId: string) => {
       },
     };
   } catch (error) {
-    console.error("Failed to fetch links:", error);
+    log.error(error);
     throw new ErrorWithStatus("Failed to fetch links", 500);
   }
 };
@@ -63,6 +66,7 @@ export const createLink = async (
   customSuffix: string,
 ) => {
   try {
+    log.info("Creating link called");
     const data = await db.link.create({
       data: {
         name: body.name,
@@ -71,15 +75,17 @@ export const createLink = async (
         userId,
       },
     });
-    
+
     return { success: true, data };
   } catch (error) {
+    log.error(error);
     throw new ErrorWithStatus("Failed to create link", 500);
   }
 };
 
 export const getLink = async (linkId: string, userId: string | undefined) => {
   try {
+    log.info("Fetching link called");
     const link = await db.link.findUnique({
       where: {
         id: linkId,
@@ -91,108 +97,133 @@ export const getLink = async (linkId: string, userId: string | undefined) => {
     }
     return link;
   } catch (error) {
+    log.error(error);
     throw new ErrorWithStatus("Failed to fetch link", 500);
   }
 };
 
-export const getLinkByCustomSuffix = async (customSuffix: string) =>
-  await db.link.findUnique({
-    where: {
-      customSuffix,
-    },
-  });
+export const getLinkByCustomSuffix = async (customSuffix: string) => {
+  try {
+    log.info("Fetching link by custom suffix called");
+    return await db.link.findUnique({
+      where: {
+        customSuffix,
+      },
+    });
+  } catch (error) {
+    log.error(error);
+    throw new ErrorWithStatus("Failed to fetch link", 500);
+  }
+};
 
 export const updateLink = async (
   linkId: string,
   userId: string,
   body: z.infer<typeof changeCustomSuffixSchema>,
 ) => {
-  const { customSuffix } = body;
+  try {
+    log.info("Updating link called");
+    const { customSuffix } = body;
 
-  const isExisting = await isCustomSuffixInUse(customSuffix);
+    const isExisting = await isCustomSuffixInUse(customSuffix);
 
-  if (isExisting) {
-    throw new ErrorWithStatus("custom suffix in use", 409);
+    if (isExisting) {
+      throw new ErrorWithStatus("custom suffix in use", 409);
+    }
+
+    await db.link.update({
+      where: {
+        id: linkId,
+        userId,
+      },
+      data: {
+        customSuffix,
+      },
+    });
+  } catch (error) {
+    log.error(error);
+    throw new ErrorWithStatus("Failed to update link", 500);
   }
-
-  await db.link.update({
-    where: {
-      id: linkId,
-      userId,
-    },
-    data: {
-      customSuffix,
-    },
-  });
 };
 
 export const getUserTopCountries = async (userId: string) => {
-  const topCountries = await db.visit.groupBy({
-    by: ["country"],
-    where: {
-      link: {
-        userId,
+  try {
+    log.info("Fetching top countries called");
+    const topCountries = await db.visit.groupBy({
+      by: ["country"],
+      where: {
+        link: {
+          userId,
+        },
       },
-    },
-    _sum: {
-      count: true,
-    },
-    orderBy: {
       _sum: {
-        count: "desc",
+        count: true,
       },
-    },
-  });
+      orderBy: {
+        _sum: {
+          count: "desc",
+        },
+      },
+    });
 
-  const formattedData = topCountries.map((country) => ({
-    country: country.country,
-    clicks: country._sum.count || 0,
-  }));
-  return formattedData;
+    const formattedData = topCountries.map((country) => ({
+      country: country.country,
+      clicks: country._sum.count || 0,
+    }));
+    return formattedData;
+  } catch (error) {
+    log.error(error);
+    throw new ErrorWithStatus("Failed to fetch top countries", 500);
+  }
 };
 
 export const updateDbOnLinkClick = async (
   customSuffix: string,
   country: string,
 ) => {
-  await db.$transaction(async (tx) => {
-    // Update link click count
-    const updatedLink = await tx.link.update({
-      where: { customSuffix },
-      data: { clicks: { increment: 1 } },
-      include: { user: true },
-    });
-
-    if (updatedLink.userId) {
-      // Check if this country has been visited before for any of the user's links
-      const existingVisit = await tx.visit.findFirst({
-        where: {
-          link: { userId: updatedLink.userId },
-          country,
-        },
+  try {
+    log.info("Updating database on link click called");
+    await db.$transaction(async (tx) => {
+      // Update link click count
+      const updatedLink = await tx.link.update({
+        where: { customSuffix },
+        data: { clicks: { increment: 1 } },
+        include: { user: true },
       });
 
-      // Update user stats
-      await tx.user.update({
-        where: { id: updatedLink.userId },
-        data: {
-          totalClicks: { increment: 1 },
-          uniqueCountryCount: {
-            increment: existingVisit ? 0 : 1,
+      if (updatedLink.userId) {
+        const existingVisit = await tx.visit.findFirst({
+          where: {
+            link: { userId: updatedLink.userId },
+            country,
           },
-        },
+        });
+
+        // Update user stats
+        await tx.user.update({
+          where: { id: updatedLink.userId },
+          data: {
+            totalClicks: { increment: 1 },
+            uniqueCountryCount: {
+              increment: existingVisit ? 0 : 1,
+            },
+          },
+        });
+      }
+
+      // Upsert visit entry
+      const updatedVisit = await tx.visit.upsert({
+        where: { linkId_country: { linkId: updatedLink.id, country } },
+        create: { linkId: updatedLink.id, country, count: 1 },
+        update: { count: { increment: 1 } },
       });
-    }
 
-    // Upsert visit entry
-    const updatedVisit = await tx.visit.upsert({
-      where: { linkId_country: { linkId: updatedLink.id, country } },
-      create: { linkId: updatedLink.id, country, count: 1 },
-      update: { count: { increment: 1 } },
+      return { updatedLink, updatedVisit };
     });
-
-    return { updatedLink, updatedVisit };
-  });
+  } catch (error) {
+    log.error(error);
+    throw new ErrorWithStatus("Failed to update database on link click", 500);
+  }
 };
 
 export const getLinkStats = async (linkId: string, userId: string) => {
@@ -229,8 +260,6 @@ export const getLinkStats = async (linkId: string, userId: string) => {
   const top5Countries = visits
     .slice(0, 5)
     .map(({ country, count }) => ({ country, clickCount: count }));
-
-  // Calculate percentage of visits for each country
   const countryStats = visits.map((visit) => ({
     country: visit.country,
     count: visit.count,

@@ -58,7 +58,6 @@ describe('PATCH function', () => {
       body: JSON.stringify(mockBody),
     });
 
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
     const response = await PATCH(mockRequest);
     const result = await response.json();
@@ -66,7 +65,6 @@ describe('PATCH function', () => {
     expect(response.status).toBe(422);
     expect(result).toEqual({ success: false, error: 'Custom error' });
 
-    consoleSpy.mockRestore();
   });
 
   it('should handle unexpected errors', async () => {

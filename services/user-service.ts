@@ -1,8 +1,14 @@
 import ErrorWithStatus from "@/exception/custom-error";
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
+import logger from "@/lib/logger";
+
+const log = logger.child({
+  service: "user-service",
+});
 
 export const getUserStats = async (userId: string) => {
+  log.info("Fetching user stats called");
   try {
     const data = await db.user.findUnique({
       where: { id: userId },
@@ -55,7 +61,6 @@ export const getUserStats = async (userId: string) => {
       take: 5,
     });
 
-    // Prepare the response data
     const stats = {
       userId: id,
       email,
@@ -71,7 +76,7 @@ export const getUserStats = async (userId: string) => {
 
     return stats;
   } catch (error) {
-    console.error("Error fetching user stats:", error);
+    log.error("Error fetching user stats:", error);
     if (error instanceof ErrorWithStatus) {
       throw error;
     }
@@ -93,6 +98,7 @@ export const getUserByEmail = async (email: string) => {
 export const sanitizeUser = async (
   email: string,
 ): Promise<Omit<User, "password" | "image"> | null> => {
+  log.info("Sanitizing user called");
   const userData = await db.user.findUnique({
     where: {
       email,

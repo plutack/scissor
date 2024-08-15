@@ -68,7 +68,6 @@ describe("POST /api/auth/login", () => {
     const data = await res.json();
 
     expect(res.status).toBe(401);
-    console.log(data);
     expect(data).toEqual({ success: false, error: "Invalid credentials" });
   });
 

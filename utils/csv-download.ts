@@ -1,4 +1,9 @@
+import logger from "@/lib/logger";
+
+const log = logger.child({ util: "CSV-download" }); 
+
 function generateCSV(data: any[]): string {
+  log.info("Function called");
   const headers = Object.keys(data[0]);
   const csvRows = [
     headers.join(","), // CSV header row

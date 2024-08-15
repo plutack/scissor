@@ -19,7 +19,6 @@ function useLinkRedirect(customSuffix: string) {
         const result: { success: boolean; data: string } = await ky
           .get(`/api/link/public/${customSuffix}`)
           .json();
-        console.log("result", result);
         setRedirectUrl(result.data);
         setRedirecting(true);
 
@@ -42,7 +41,6 @@ function useLinkRedirect(customSuffix: string) {
           window.location.href = redirectTo;
         }, 2000);
       } catch (error) {
-        console.error(error);
         window.location.href = "/invalid-link";
       } finally {
         setLoading(false);

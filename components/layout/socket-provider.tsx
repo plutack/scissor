@@ -27,7 +27,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     if (status === "loading") return;
     if (session?.user && !socket) {
       console.log("Initializing socket connection for user:", session.user.id);
-      console.log("next public base url ", process.env.NEXTAUTH_URL);
       const socketInstance = new (ClientIO as any)(process.env.NEXTAUTH_URL!, {
         path: "/api/socketio",
         auth: {

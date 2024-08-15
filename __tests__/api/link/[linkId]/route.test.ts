@@ -58,8 +58,6 @@ describe("GET function", () => {
       new Error("Unexpected error"),
     );
 
-    const consoleSpy = jest.spyOn(console, "error").mockImplementation();
-
     const mockRequest = new Request("http://localhost/api/link/link123");
     const response = await GET(mockRequest, { params: { linkId: "link123" } });
     const result = await response.json();
@@ -69,9 +67,6 @@ describe("GET function", () => {
       success: false,
       message: "An unexpected error occurred",
     });
-    expect(consoleSpy).toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
   });
 });
 
@@ -138,8 +133,6 @@ describe("PATCH function", () => {
       new ErrorWithStatus("Invalid input", 400),
     );
 
-    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
-
     const mockRequest = new Request("http://localhost/api/link/link123", {
       method: "PATCH",
       body: JSON.stringify({}),
@@ -151,9 +144,6 @@ describe("PATCH function", () => {
 
     expect(response.status).toBe(400);
     expect(result).toEqual({ success: false, message: "Invalid input" });
-    expect(consoleSpy).toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
   });
 
   it("should handle unexpected errors", async () => {
@@ -161,8 +151,6 @@ describe("PATCH function", () => {
       new Error("Unexpected error"),
     );
     (validateWithSchema as jest.Mock).mockResolvedValue({});
-
-    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
 
     const mockRequest = new Request("http://localhost/api/link/link123", {
       method: "PATCH",
@@ -178,8 +166,5 @@ describe("PATCH function", () => {
       success: false,
       message: "An unexpected error occurred",
     });
-    expect(consoleSpy).toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
   });
 });

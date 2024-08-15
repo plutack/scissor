@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import fetchLinkData from "@/utils/fetchData";
+import fetchLinkData from "@/utils/fetch-data";
 import { useParams } from "next/navigation";
 import { useQuery, QueryFunction } from "@tanstack/react-query";
 

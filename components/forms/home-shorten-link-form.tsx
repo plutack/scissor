@@ -9,9 +9,7 @@ export function HomeShortenLinkForm() {
   const [shortUrl, setShortUrl] = useState("");
 
   const handleSuccess = ({ data }: { data: Link }) => {
-    console.log("data", data);
     const newShortUrl = `${process.env.NEXTAUTH_URL}/${data.customSuffix}`;
-    console.log("newShortUrl", newShortUrl);
     setShortUrl(newShortUrl);
     setShowQRCode(true);
   };

@@ -32,12 +32,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   };
 
   const onUpdate = (name: string, newValue: string) => {
-    console.log(name, newValue);
   };
 
   const handleSave = () => {
     onUpdate(data.name, editedValue);
-    console.log(data.name, editedValue);
     setIsEditing(false);
   };
 

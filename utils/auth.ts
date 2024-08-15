@@ -1,8 +1,11 @@
 import { decode } from "next-auth/jwt";
 import { auth } from "@/auth";
+import logger from "@/lib/logger";
+
+const log = logger.child({ util: "Auth" });
 
 export const getUserIdFromRequest = async (request: Request) => {
-  // Check for Bearer token
+  log.info("Function called");
   const authHeader = request.headers.get("Authorization");
   if (authHeader && authHeader.startsWith("Bearer ")) {
     const token = authHeader.split(" ")[1];
@@ -16,7 +19,7 @@ export const getUserIdFromRequest = async (request: Request) => {
         return decodedToken.sub;
       }
     } catch (error) {
-      console.error("Token verification failed:", error);
+      log.error("Token verification failed:", error);
     }
   }
   // If no valid Bearer token, fall back to session

@@ -9,9 +9,6 @@ import { Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useDashboardData();
-  console.log("data", data);
-  console.log("isLoading", isLoading);
-  console.log("error", error);
 
   if (isLoading) {
     return (

@@ -10,8 +10,6 @@ export const useDashboardData = () => {
   const { socket, isConnected } = useSocket();
 
   useEffect(() => {
-    console.log("isConnected", isConnected);
-    console.log("socket", socket);
     if (isConnected && socket) {
       // Request initial data
       socket.emit('getDashboardData');

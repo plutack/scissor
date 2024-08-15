@@ -1,9 +1,8 @@
 import ky from "ky";
 
-const fetchData = async (urlPath: string) => {
-  const response = await ky.get(urlPath).json();
-  console.log("fetchData", response);
+const fetchLinkData = async (endpoint: string) => {
+  const response = await ky.get(endpoint).json();
   return response;
 };
 
-export default fetchData;
+export default fetchLinkData;

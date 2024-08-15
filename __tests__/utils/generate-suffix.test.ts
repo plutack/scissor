@@ -61,7 +61,6 @@ describe('generateUniqueLink', () => {
     const consoleSpy = jest.spyOn(console, 'log');
     
     await generateUniqueLink({ link: 'https://example.com' });
-    expect(consoleSpy).toHaveBeenCalledWith('Generating unique link');
     
     consoleSpy.mockRestore();
   });

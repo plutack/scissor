@@ -10,7 +10,6 @@ export async function POST(request: Request) {
     await rateLimitIP(request);
     const body = await request.json();
     const validatedFields = registerSchema.safeParse(body);
-    console.log(validatedFields);
     if (!validatedFields.success) {
       throw new ErrorWithStatus("Invalid fields", 400);
     }
