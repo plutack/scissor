@@ -2,7 +2,7 @@ import { POST } from "@/app/api/auth/register/route";
 import { registerSchema } from "@/schemas";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { findUserByEmail } from "@/data/user";
+import { getUserByEmail } from "@/services/user-service";
 import rateLimitIP from "@/utils/rate-limit";
 import ErrorWithStatus from "@/exception/custom-error";
 
@@ -22,8 +22,8 @@ jest.mock("@/lib/db", () => ({
     },
   },
 }));
-jest.mock("@/data/user", () => ({
-  findUserByEmail: jest.fn(),
+jest.mock("@/services/user-service", () => ({
+  getUserByEmail: jest.fn(),
 }));
 jest.mock("@/utils/rate-limit", () => jest.fn());
 
@@ -67,7 +67,7 @@ describe("POST /api/auth/register", () => {
         password: "password123",
       },
     });
-    (findUserByEmail as jest.Mock).mockResolvedValue({
+    (getUserByEmail as jest.Mock).mockResolvedValue({
       id: "1",
       email: "test@example.com",
     });
@@ -93,7 +93,7 @@ describe("POST /api/auth/register", () => {
         password: "password123",
       },
     });
-    (findUserByEmail as jest.Mock).mockResolvedValue(null);
+    (getUserByEmail as jest.Mock).mockResolvedValue(null);
     (bcrypt.hash as jest.Mock).mockResolvedValue("hashed_password");
     (db.user.create as jest.Mock).mockResolvedValue({
       id: "1",
@@ -146,7 +146,7 @@ describe("POST /api/auth/register", () => {
         password: "password123",
       },
     });
-    (findUserByEmail as jest.Mock).mockRejectedValue(
+    (getUserByEmail as jest.Mock).mockRejectedValue(
       new Error("Database error"),
     );
 

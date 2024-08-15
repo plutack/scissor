@@ -1,7 +1,7 @@
 import { registerSchema } from "@/schemas";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
-import { findUserByEmail } from "@/data/user";
+import { getUserByEmail } from "@/services/user-service";
 import rateLimitIP from "@/utils/rate-limit";
 import ErrorWithStatus from "@/exception/custom-error";
 
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
     const { name, email, password } = validatedFields.data;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const existingUser = await findUserByEmail(email);
+    const existingUser = await getUserByEmail(email);
     if (existingUser) throw new ErrorWithStatus("email already in use", 409);
     await db.user.create({
       data: {
