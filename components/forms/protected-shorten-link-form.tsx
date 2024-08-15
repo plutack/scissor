@@ -16,7 +16,7 @@ export function ProtectedShortenLinkForm() {
   const [shortUrl, setShortUrl] = useState("");
 
   const handleSuccess = ({ data }: { data: Link }) => {
-    setShortUrl(`${process.env.NEXT_PUBLIC_BASE_URL}/${data.customSuffix}`);
+    setShortUrl(`${process.env.NEXTAUTH_URL}/${data.customSuffix}`);
     setShowForm(false);
     setShowQRCode(true);
   };

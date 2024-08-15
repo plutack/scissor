@@ -21,7 +21,7 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
         path: "/api/socketio",
         addTrailingSlash: false,
         cors: {
-          origin: process.env.NEXT_PUBLIC_BASE_URl,
+          origin: process.env.NEXTAUTH_URL,
           credentials: true,
         },
       });
@@ -58,7 +58,9 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponseServerIo) => {
         socket.on("getDashboardData", async () => {
           console.log("Received getDashboardData request");
           try {
-            const dashboardData = await userService.getUserStats(socket.data.user.id);
+            const dashboardData = await userService.getUserStats(
+              socket.data.user.id,
+            );
             console.log("Sending dashboard data:", dashboardData);
             socket.emit("dashboardData", dashboardData);
           } catch (error) {

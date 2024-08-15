@@ -23,7 +23,7 @@ export function RecentLinks({ links }: RecentLinksProps) {
               target="_blank"
               className="text-sm font-medium truncate block hover:underline"
             >
-              {`${process.env.NEXT_PUBLIC_BASE_URL}/${item.customSuffix}`}
+              {`${process.env.NEXTAUTH_URL}/${item.customSuffix}`}
             </Link>
             <p className="text-sm text-muted-foreground truncate">
               {item.link}

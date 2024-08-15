@@ -49,7 +49,7 @@ export function ShortenLinkForm({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { toast } = useToast();
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = process.env.NEXTAUTH_URL;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(shortenLinkSchema),
