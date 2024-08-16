@@ -6,9 +6,15 @@ import { sanitizeUser } from "@/services/user-service";
 import rateLimitIP from "@/utils/rate-limit";
 import ErrorWithStatus from "@/exception/custom-error";
 import { AuthError } from "next-auth";
+import logger from "@/lib/logger";
+
+const log = logger.child({
+  route: "/api/auth/login",
+});
 
 export async function POST(request: Request, response: Response) {
   try {
+    log.info("Login request received");
     await rateLimitIP(request);
     const body = await request.json();
     const validatedFields = loginSchema.safeParse(body);
@@ -28,13 +34,14 @@ export async function POST(request: Request, response: Response) {
     const user = await sanitizeUser(email);
 
     const accessToken = cookies().get("authjs.session-token")?.value;
-    console.log("accessToken", accessToken);
+    log.debug("accessToken", accessToken);
     return Response.json({
       success: true,
       accessToken,
       user,
     });
   } catch (error) {
+    log.error("Error during login", error);
     if (error instanceof ErrorWithStatus) {
       return Response.json(
         { success: false, error: error.message },
