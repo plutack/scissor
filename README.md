@@ -8,6 +8,9 @@
 - Email: test123@testmail.com
 - Password: Test@1234
 
+I strongly recommend interactiong with the api via stoplight interface at https://scissor.talut.tech/api-docs
+postman refuses to return accessToken needed for protected routes interactions.
+
 ## Tools Used
 - [Nextjs](https://nextjs.org/)
 - [Next auth v5](https://authjs.dev/getting-started/migrating-to-v5)
@@ -17,6 +20,7 @@
 - [Socket.io](https://socket.io)
 - [Redis](https://redis.io)
 - [coolify](https://coolify.io)
+- [Pino](https://getpino.io/)
 
 ## Getting Started
 1. Clone repo locally.
