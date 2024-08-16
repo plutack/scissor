@@ -1,18 +1,18 @@
 import ErrorWithStatus from "@/exception/custom-error";
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { redis } from "@/lib/redis";
 import logger from "@/lib/logger";
 
 const log = logger.child({ util: "Rate-limit" });
 
 const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
+  redis,
   limiter: Ratelimit.slidingWindow(60, "1 m"),
 });
 
 const rateLimitIP = async (request: Request) => {
   log.info("Rate limit check");
-  const ip = request.headers.get("x-forwarded-for") ?? "";
+  const ip = request.headers.get("x-forwarded-for") ?? "unknown";
   const { success } = await ratelimit.limit(ip);
   if (!success) {
     throw new ErrorWithStatus("Too Many Requests", 429);

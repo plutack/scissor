@@ -4,8 +4,11 @@ import { shortenLinkSchema, changeCustomSuffixSchema } from "@/schemas";
 import { z } from "zod";
 import isCustomSuffixInUse from "@/utils/check-custom-suffix";
 import logger from "@/lib/logger";
+import { getRedisValue, setRedisValue, redis } from "@/lib/redis";
 
 const log = logger.child({ service: "link-service" });
+
+const CACHE_TTL = 3600; // time is in seconds so 1hr
 
 export const getAllLinks = async (url: URL, userId: string) => {
   log.info("Fetching all links called");
@@ -16,18 +19,27 @@ export const getAllLinks = async (url: URL, userId: string) => {
   );
   const name = url.searchParams.get("name") || "";
 
-  const skip = (page - 1) * limit;
-
-  // Prepare the where clause
-  const whereClause: any = { userId };
-  if (name) {
-    whereClause.name = {
-      contains: name,
-      mode: "insensitive",
-    };
-  }
+  const cacheKey = `allLinks:${userId}:${page}:${limit}:${name}`;
 
   try {
+    // Try to get data from cache
+    const cachedData = await getRedisValue<any>(cacheKey);
+    if (cachedData) {
+      log.info(`All links found in cache for userId: ${userId}`);
+      return cachedData;
+    }
+
+    const skip = (page - 1) * limit;
+
+    // Prepare the where clause
+    const whereClause: any = { userId };
+    if (name) {
+      whereClause.name = {
+        contains: name,
+        mode: "insensitive",
+      };
+    }
+
     // Fetch paginated links with optional name filter
     const links = await db.link.findMany({
       where: whereClause,
@@ -45,7 +57,7 @@ export const getAllLinks = async (url: URL, userId: string) => {
 
     const totalPages = Math.ceil(totalLinks / limit);
 
-    return {
+    const result = {
       data: links,
       pagination: {
         page,
@@ -54,8 +66,13 @@ export const getAllLinks = async (url: URL, userId: string) => {
         totalPages,
       },
     };
+
+    // Store in cache
+    await setRedisValue(cacheKey, result, CACHE_TTL);
+
+    return result;
   } catch (error) {
-    log.error(error);
+    log.error(`Error fetching all links: ${error}`);
     throw new ErrorWithStatus("Failed to fetch links", 500);
   }
 };
@@ -76,9 +93,20 @@ export const createLink = async (
       },
     });
 
+    // Invalidate cache for getAllLinks
+    const cacheKeyPrefix = `allLinks:${userId}`;
+    const keys = await redis.keys(`${cacheKeyPrefix}*`);
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+
+    // Cache the new link
+    const cacheKey = `link:${customSuffix}`;
+    await setRedisValue(cacheKey, data, CACHE_TTL);
+
     return { success: true, data };
   } catch (error) {
-    log.error(error);
+    log.error(`Error creating link: ${error}`);
     throw new ErrorWithStatus("Failed to create link", 500);
   }
 };
@@ -86,6 +114,15 @@ export const createLink = async (
 export const getLink = async (linkId: string, userId: string | undefined) => {
   try {
     log.info("Fetching link called");
+    const cacheKey = `link:${linkId}`;
+
+    // Try to get data from cache
+    const cachedData = await getRedisValue<any>(cacheKey);
+    if (cachedData) {
+      log.info(`Link found in cache for linkId: ${linkId}`);
+      return cachedData;
+    }
+
     const link = await db.link.findUnique({
       where: {
         id: linkId,
@@ -95,23 +132,43 @@ export const getLink = async (linkId: string, userId: string | undefined) => {
     if (!link) {
       throw new ErrorWithStatus("Link not found", 404);
     }
+
+    // Store in cache
+    await setRedisValue(cacheKey, link, CACHE_TTL);
+
     return link;
   } catch (error) {
-    log.error(error);
+    log.error(`Error fetching link: ${error}`);
     throw new ErrorWithStatus("Failed to fetch link", 500);
   }
 };
 
 export const getLinkByCustomSuffix = async (customSuffix: string) => {
+  log.info(`Fetching link for customSuffix: ${customSuffix}`);
   try {
-    log.info("Fetching link by custom suffix called");
-    return await db.link.findUnique({
-      where: {
-        customSuffix,
-      },
-    });
+    const cacheKey = `link:${customSuffix}`;
+
+    // Try to get data from cache
+    const cachedData = await getRedisValue<any>(cacheKey);
+    if (cachedData) {
+      log.info(`Link found in cache for customSuffix: ${customSuffix}`);
+      return cachedData;
+    }
+
+    log.info(`Link not found in cache for customSuffix: ${customSuffix}, fetching from database`);
+    // If not in cache, fetch from database
+    const link = await db.link.findUnique({ where: { customSuffix } });
+    if (link) {
+      log.info(`Link found in database for customSuffix: ${customSuffix}, storing in cache`);
+      // Store in cache
+      await setRedisValue(cacheKey, link, CACHE_TTL);
+      return link;
+    } else {
+      log.warn(`Link not found for customSuffix: ${customSuffix}`);
+      return null;
+    }
   } catch (error) {
-    log.error(error);
+    log.error(`Error fetching link for customSuffix: ${customSuffix}. Error: ${error}`);
     throw new ErrorWithStatus("Failed to fetch link", 500);
   }
 };
@@ -131,7 +188,7 @@ export const updateLink = async (
       throw new ErrorWithStatus("custom suffix in use", 409);
     }
 
-    await db.link.update({
+    const updatedLink = await db.link.update({
       where: {
         id: linkId,
         userId,
@@ -140,8 +197,24 @@ export const updateLink = async (
         customSuffix,
       },
     });
+
+    // Update cache
+    const cacheKey = `link:${customSuffix}`;
+    await setRedisValue(cacheKey, updatedLink, CACHE_TTL);
+
+    // Invalidate cache for getAllLinks
+    const cacheKeyPrefix = `allLinks:${userId}`;
+    const keys = await redis.keys(`${cacheKeyPrefix}*`);
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+
+    // Invalidate cache for the old custom suffix
+    const oldLinkCacheKey = `link:${linkId}`;
+    await redis.del(oldLinkCacheKey);
+
   } catch (error) {
-    log.error(error);
+    log.error(`Error updating link: ${error}`);
     throw new ErrorWithStatus("Failed to update link", 500);
   }
 };
@@ -149,6 +222,15 @@ export const updateLink = async (
 export const getUserTopCountries = async (userId: string) => {
   try {
     log.info("Fetching top countries called");
+    const cacheKey = `topCountries:${userId}`;
+
+    // Try to get data from cache
+    const cachedData = await getRedisValue<any>(cacheKey);
+    if (cachedData) {
+      log.info(`Top countries found in cache for userId: ${userId}`);
+      return cachedData;
+    }
+
     const topCountries = await db.visit.groupBy({
       by: ["country"],
       where: {
@@ -170,9 +252,13 @@ export const getUserTopCountries = async (userId: string) => {
       country: country.country,
       clicks: country._sum.count || 0,
     }));
+
+    // Store in cache
+    await setRedisValue(cacheKey, formattedData, CACHE_TTL);
+
     return formattedData;
   } catch (error) {
-    log.error(error);
+    log.error(`Error fetching top countries: ${error}`);
     throw new ErrorWithStatus("Failed to fetch top countries", 500);
   }
 };
@@ -218,59 +304,91 @@ export const updateDbOnLinkClick = async (
         update: { count: { increment: 1 } },
       });
 
+      // Update cache
+      const linkCacheKey = `link:${customSuffix}`;
+      await setRedisValue(linkCacheKey, updatedLink, CACHE_TTL);
+
+      // Invalidate user top countries cache
+      if (updatedLink.userId) {
+        const topCountriesCacheKey = `topCountries:${updatedLink.userId}`;
+        await redis.del(topCountriesCacheKey);
+      }
+
       return { updatedLink, updatedVisit };
     });
   } catch (error) {
-    log.error(error);
+    log.error(`Error updating database on link click: ${error}`);
     throw new ErrorWithStatus("Failed to update database on link click", 500);
   }
 };
 
 export const getLinkStats = async (linkId: string, userId: string) => {
-  const link = await db.link.findUnique({
-    where: {
-      id: linkId,
-      userId: userId,
-    },
-    select: {
-      id: true,
-      name: true,
-      customSuffix: true,
-      createdAt: true,
-      updatedAt: true,
-      clicks: true,
-    },
-  });
+  const cacheKey = `linkStats:${linkId}`;
 
-  if (!link) {
-    throw new ErrorWithStatus("Link not found", 404);
+  try {
+    // Try to get data from cache
+    const cachedData = await getRedisValue<any>(cacheKey);
+    if (cachedData) {
+      log.info(`Link stats found in cache for linkId: ${linkId}`);
+      return cachedData;
+    }
+
+    const link = await db.link.findUnique({
+      where: {
+        id: linkId,
+        userId: userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        customSuffix: true,
+        createdAt: true,
+        updatedAt: true,
+        clicks: true,
+      },
+    });
+
+    if (!link) {
+      throw new ErrorWithStatus("Link not found", 404);
+    }
+
+    const visits = await db.visit.findMany({
+      where: {
+        linkId,
+      },
+      orderBy: {
+        count: "desc",
+      },
+    });
+
+    const totalVisits = visits.reduce((acc, visit) => acc + visit.count, 0);
+    const uniqueCountries = new Set(visits.map((visit) => visit.country));
+    const top5Countries = visits
+      .slice(0, 5)
+      .map(({ country, count }) => ({ country, clickCount: count }));
+    const countryStats = visits.map((visit) => ({
+      country: visit.country,
+      count: visit.count,
+      percentage: ((visit.count / totalVisits) * 100).toFixed(2),
+    }));
+
+    const result = {
+      link,
+      totalVisits,
+      uniqueCountriesCount: uniqueCountries.size,
+      top5Countries,
+      countryStats,
+    };
+
+    // Store in cache
+    await setRedisValue(cacheKey, result, CACHE_TTL);
+
+    return result;
+  } catch (error) {
+    log.error(`Error fetching link stats: ${error}`);
+    if (error instanceof ErrorWithStatus) {
+      throw error;
+    }
+    throw new ErrorWithStatus("Failed to fetch link stats", 500);
   }
-
-  const visits = await db.visit.findMany({
-    where: {
-      linkId,
-    },
-    orderBy: {
-      count: "desc",
-    },
-  });
-
-  const totalVisits = visits.reduce((acc, visit) => acc + visit.count, 0);
-  const uniqueCountries = new Set(visits.map((visit) => visit.country));
-  const top5Countries = visits
-    .slice(0, 5)
-    .map(({ country, count }) => ({ country, clickCount: count }));
-  const countryStats = visits.map((visit) => ({
-    country: visit.country,
-    count: visit.count,
-    percentage: ((visit.count / totalVisits) * 100).toFixed(2),
-  }));
-
-  return {
-    link,
-    totalVisits,
-    uniqueCountriesCount: uniqueCountries.size,
-    top5Countries,
-    countryStats,
-  };
 };

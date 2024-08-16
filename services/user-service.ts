@@ -1,5 +1,6 @@
 import ErrorWithStatus from "@/exception/custom-error";
 import { db } from "@/lib/db";
+import { getRedisValue, setRedisValue } from "@/lib/redis";
 import { User } from "@prisma/client";
 import logger from "@/lib/logger";
 
@@ -7,13 +8,29 @@ const log = logger.child({
   service: "user-service",
 });
 
+const CACHE_TTL = 3600; // 1 hour in seconds
+
 export const getUserStats = async (userId: string) => {
-  log.info("Fetching user stats called");
+  log.info(`Fetching user stats called for userId: ${userId}`);
   try {
+    const cacheKey = `user:${userId}:stats`;
+
+    // Try to get data from cache
+    const cachedData = await getRedisValue<any>(cacheKey);
+    if (cachedData) {
+      log.info(`User stats found in cache for userId: ${userId}`);
+      return cachedData;
+    } else {
+      log.info(`User stats not found in cache for userId: ${userId}`);
+    }
+
+    // If not in cache, fetch from database
+    log.info(`Fetching user stats from database for userId: ${userId}`);
     const data = await db.user.findUnique({
       where: { id: userId },
     });
     if (!data) {
+      log.warn(`User not found in database for ID: ${userId}`);
       throw new ErrorWithStatus("User not found", 404);
     }
     const { id, email, name } = data;
@@ -74,9 +91,13 @@ export const getUserStats = async (userId: string) => {
       })),
     };
 
+    // Store in cache
+    log.info(`Storing user stats in cache for userId: ${userId}`);
+    await setRedisValue(cacheKey, stats, CACHE_TTL);
+
     return stats;
   } catch (error) {
-    log.error("Error fetching user stats:", error);
+    log.error(`Error fetching user stats for userId: ${userId}. Error: ${error}`);
     if (error instanceof ErrorWithStatus) {
       throw error;
     }
@@ -89,8 +110,24 @@ export const getUserStats = async (userId: string) => {
 
 export const getUserByEmail = async (email: string) => {
   try {
-    return await db.user.findUnique({ where: { email } });
-  } catch {
+    const cacheKey = `user:${email}`;
+
+    // Try to get data from cache
+    const cachedData = await getRedisValue<User>(cacheKey);
+    if (cachedData) {
+      log.info(`User found in cache for email: ${email}`);
+      return cachedData;
+    }
+
+    // If not in cache, fetch from database
+    const user = await db.user.findUnique({ where: { email } });
+    if (user) {
+      // Store in cache
+      await setRedisValue(cacheKey, user, CACHE_TTL);
+    }
+    return user;
+  } catch (error) {
+    log.error(`Error fetching user by email: ${email}. Error: ${error}`);
     return null;
   }
 };
@@ -99,11 +136,7 @@ export const sanitizeUser = async (
   email: string,
 ): Promise<Omit<User, "password" | "image"> | null> => {
   log.info("Sanitizing user called");
-  const userData = await db.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  const userData = await getUserByEmail(email);
 
   if (!userData) {
     return null;
