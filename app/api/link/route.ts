@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     const { data, pagination } = await linkService.getAllLinks(url, userId);
     return Response.json({ success: true, data, pagination });
   } catch (error) {
-    log.error("Error in GET request", error);
+    log.error("Error in GET request", { error });
     if (error instanceof ErrorWithStatus) {
       return Response.json(
         { success: false, error: error.message },
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     );
     return Response.json({ success: true, data });
   } catch (error) {
-    log.error("Error in POST request", error);
+    log.error("Error in POST request", { error });
     if (error instanceof ErrorWithStatus) {
       return Response.json(
         { success: false, error: error.message },

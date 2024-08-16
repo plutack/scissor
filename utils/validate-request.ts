@@ -12,6 +12,7 @@ export const validateWithSchema = async <T extends ZodObject<any>>(
   log.info("Validating request");
   const validatedFields = schema.safeParse(body);
   if (!validatedFields.success) {
+    log.error("Invalid fields", { body });
     throw new ErrorWithStatus("Invalid fields", 400);
   }
   return validatedFields.data;

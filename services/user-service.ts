@@ -13,34 +13,35 @@ const CACHE_TTL = 3600; // 1 hour in seconds
 
 // Add this function to invalidate user-related caches
 export async function invalidateUserCaches(userId: string) {
-  log.info({ userId }, `Invalidating user caches for userId`);
+  log.info("Invalidating user caches for userId", { userId });
   const keys = await redis.keys(`user:${userId}*`);
   if (keys.length > 0) {
     await redis.del(...keys);
+    log.info("User caches invalidated for userId", { userId });
   }
 }
 
 export const getUserStats = async (userId: string) => {
-  log.info(`Fetching user stats called for userId: ${userId}`);
+  log.info("Fetching user stats called for userId", { userId });
   try {
     const cacheKey = `user:${userId}:stats`;
 
     // Try to get data from cache
     const cachedData = await getRedisValue<any>(cacheKey);
     if (cachedData) {
-      log.info(`User stats found in cache for userId: ${userId}`);
+      log.info("User stats found in cache for userId", { userId });
       return cachedData;
     } else {
-      log.info(`User stats not found in cache for userId: ${userId}`);
+      log.info("User stats not found in cache for userId", { userId });
     }
 
     // If not in cache, fetch from database
-    log.info(`Fetching user stats from database for userId: ${userId}`);
+    log.info("Fetching user stats from database for userId", { userId });
     const data = await db.user.findUnique({
       where: { id: userId },
     });
     if (!data) {
-      log.warn(`User not found in database for ID: ${userId}`);
+      log.warn("User not found in database for ID", { userId });
       throw new ErrorWithStatus("User not found", 404);
     }
     const { id, email, name } = data;
@@ -107,12 +108,11 @@ export const getUserStats = async (userId: string) => {
 
     // Invalidate other user-related caches
     await invalidateUserCaches(userId);
+    log.info("User stats stored in cache for userId", { userId });
 
     return stats;
   } catch (error) {
-    log.error(
-      `Error fetching user stats for userId: ${userId}. Error: ${error}`,
-    );
+    log.error("Error fetching user stats for userId", { userId, error });
     if (error instanceof ErrorWithStatus) {
       throw error;
     }
@@ -130,7 +130,7 @@ export const getUserByEmail = async (email: string) => {
     // Try to get data from cache
     const cachedData = await getRedisValue<User>(cacheKey);
     if (cachedData) {
-      log.info(`User found in cache for email: ${email}`);
+      log.info("User found in cache for email", { email });
       return cachedData;
     }
 
@@ -142,7 +142,7 @@ export const getUserByEmail = async (email: string) => {
     }
     return user;
   } catch (error) {
-    log.error(`Error fetching user by email: ${email}. Error: ${error}`);
+    log.error("Error fetching user by email", { email, error });
     return null;
   }
 };
@@ -154,9 +154,12 @@ export const sanitizeUser = async (
   const userData = await getUserByEmail(email);
 
   if (!userData) {
+    log.error("User not found", { email });
     return null;
+
   }
 
   const { password, image, ...user } = userData;
+  log.info("Sanitized user", { user });
   return user;
 };

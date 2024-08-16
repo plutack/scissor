@@ -23,7 +23,7 @@ export const register = async (
 
     return { success: "Verification message sent" };
   } catch (error) {
-    log.error("Register error:", error);
+    log.error("Register error:", { error });
     if (error instanceof HTTPError) {
       // ky throws HTTPError for non-2xx responses
       const errorData = await error.response.json();
