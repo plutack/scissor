@@ -38,6 +38,6 @@ export const columns: ColumnDef<Link>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <CellAction data={row.original} />, // FIXME: udpdate and delete actions
+    cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];

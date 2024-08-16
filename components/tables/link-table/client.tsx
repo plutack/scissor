@@ -13,6 +13,7 @@ interface Link {
   link: string;
   customSuffix: string;
   clicks: number;
+  onRowClick?: (row: Link) => void;
 }
 interface LinkProps {
   data: Link[];
@@ -36,6 +37,12 @@ export const LinkClient: React.FC<LinkProps> = ({
   const handleRowClick = (row: Link) => {
     router.push(`/dashboard/link/${row.id}`);
   };
+
+  const dataWithRowClick = data.map(row => ({
+    ...row,
+    onRowClick: handleRowClick
+  }));
+
   return (
     <>
       <div className="flex items-start justify-between">
@@ -46,11 +53,10 @@ export const LinkClient: React.FC<LinkProps> = ({
       <DataTable
         searchKey="name"
         columns={columns}
-        data={data}
+        data={dataWithRowClick}
         pagination={pagination}
         onNextPage={onNextPage}
         onPreviousPage={onPreviousPage}
-        onRowClick={handleRowClick}
       />
     </>
   );
