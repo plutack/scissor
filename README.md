@@ -3,8 +3,8 @@
 **Live URL**: https://scissor.talut.tech <br>
 **Live Api Docs**: https://scissor.talut.tech/api-docs
 
-**Note**: While site is mobile responsive, for best performance use a desktop to access.
-**Test Login(For fast access to explore all features)**<br>
+**Note**: While site is mobile responsive, for best performance use a desktop to access.<br>
+**Test Login(For fast access to explore all features)**
 - Email: test123@testmail.com
 - Password: Test@1234
 
