@@ -3,6 +3,11 @@
 **Live URL**: https://scissor.talut.tech <br>
 **Live Api Docs**: https://scissor.talut.tech/api-docs
 
+**Note**: While site is mobile responsive, for best performance use a desktop to access.
+**Test Login(For fast access to explore all features)**
+- Email: test123@testmail.com
+- Password: Test@1234
+
 ## Tools Used
 - [Nextjs](https://nextjs.org/)
 - [Next auth v5](https://authjs.dev/getting-started/migrating-to-v5)
@@ -108,6 +113,8 @@
   - Add additional routes to make use of the websocket implementation to fetch data.
   - Improve caching of data particularly on the /dashboard/link  route.
   - implement Better Search so users can search for links without needing to load all pages.
+- Admin Features
+  - Admin Dashboard and eleavated permissions for links without users
 
 
 ## Credits
