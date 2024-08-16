@@ -5,6 +5,7 @@ import { z } from "zod";
 import isCustomSuffixInUse from "@/utils/check-custom-suffix";
 import logger from "@/lib/logger";
 import { getRedisValue, setRedisValue, redis } from "@/lib/redis";
+import { invalidateUserCaches } from "./user-service";
 
 const log = logger.child({ service: "link-service" });
 
@@ -93,11 +94,10 @@ export const createLink = async (
       },
     });
 
-    // Invalidate cache for getAllLinks
-    const cacheKeyPrefix = `allLinks:${userId}`;
-    const keys = await redis.keys(`${cacheKeyPrefix}*`);
-    if (keys.length > 0) {
-      await redis.del(...keys);
+    // Invalidate cache for getAllLinks and user stats
+    await invalidateLinkCaches(userId);
+    if (userId) {
+      await invalidateUserCaches(userId);
     }
 
     // Cache the new link
@@ -155,11 +155,15 @@ export const getLinkByCustomSuffix = async (customSuffix: string) => {
       return cachedData;
     }
 
-    log.info(`Link not found in cache for customSuffix: ${customSuffix}, fetching from database`);
+    log.info(
+      `Link not found in cache for customSuffix: ${customSuffix}, fetching from database`,
+    );
     // If not in cache, fetch from database
     const link = await db.link.findUnique({ where: { customSuffix } });
     if (link) {
-      log.info(`Link found in database for customSuffix: ${customSuffix}, storing in cache`);
+      log.info(
+        `Link found in database for customSuffix: ${customSuffix}, storing in cache`,
+      );
       // Store in cache
       await setRedisValue(cacheKey, link, CACHE_TTL);
       return link;
@@ -168,7 +172,9 @@ export const getLinkByCustomSuffix = async (customSuffix: string) => {
       return null;
     }
   } catch (error) {
-    log.error(`Error fetching link for customSuffix: ${customSuffix}. Error: ${error}`);
+    log.error(
+      `Error fetching link for customSuffix: ${customSuffix}. Error: ${error}`,
+    );
     throw new ErrorWithStatus("Failed to fetch link", 500);
   }
 };
@@ -198,21 +204,19 @@ export const updateLink = async (
       },
     });
 
+    // Invalidate caches
+    await invalidateLinkCaches(userId);
+    await invalidateUserCaches(userId);
+
     // Update cache
     const cacheKey = `link:${customSuffix}`;
     await setRedisValue(cacheKey, updatedLink, CACHE_TTL);
-
-    // Invalidate cache for getAllLinks
-    const cacheKeyPrefix = `allLinks:${userId}`;
-    const keys = await redis.keys(`${cacheKeyPrefix}*`);
-    if (keys.length > 0) {
-      await redis.del(...keys);
-    }
 
     // Invalidate cache for the old custom suffix
     const oldLinkCacheKey = `link:${linkId}`;
     await redis.del(oldLinkCacheKey);
 
+    return { success: true, data: updatedLink };
   } catch (error) {
     log.error(`Error updating link: ${error}`);
     throw new ErrorWithStatus("Failed to update link", 500);
@@ -304,15 +308,19 @@ export const updateDbOnLinkClick = async (
         update: { count: { increment: 1 } },
       });
 
+      // Invalidate caches
+      await invalidateLinkCaches(updatedLink.userId ?? undefined);
+      log.info(
+        { userId: updatedLink.userId },
+        `Invalidating user caches for userId`,
+      );
+      if (updatedLink.userId) {
+        await invalidateUserCaches(updatedLink.userId);
+      }
+
       // Update cache
       const linkCacheKey = `link:${customSuffix}`;
       await setRedisValue(linkCacheKey, updatedLink, CACHE_TTL);
-
-      // Invalidate user top countries cache
-      if (updatedLink.userId) {
-        const topCountriesCacheKey = `topCountries:${updatedLink.userId}`;
-        await redis.del(topCountriesCacheKey);
-      }
 
       return { updatedLink, updatedVisit };
     });
@@ -392,3 +400,19 @@ export const getLinkStats = async (linkId: string, userId: string) => {
     throw new ErrorWithStatus("Failed to fetch link stats", 500);
   }
 };
+
+// Helper function to invalidate link-related caches
+async function invalidateLinkCaches(userId: string | undefined) {
+  if (userId) {
+    const allLinksCachePrefix = `allLinks:${userId}`;
+    const allLinksKeys = await redis.keys(`${allLinksCachePrefix}*`);
+    if (allLinksKeys.length > 0) {
+      await redis.del(...allLinksKeys);
+    }
+  }
+
+  const topCountriesCacheKey = userId ? `topCountries:${userId}` : null;
+  if (topCountriesCacheKey) {
+    await redis.del(topCountriesCacheKey);
+  }
+}

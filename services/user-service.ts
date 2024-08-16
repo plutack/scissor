@@ -3,12 +3,22 @@ import { db } from "@/lib/db";
 import { getRedisValue, setRedisValue } from "@/lib/redis";
 import { User } from "@prisma/client";
 import logger from "@/lib/logger";
+import { redis } from "@/lib/redis";
 
 const log = logger.child({
   service: "user-service",
 });
 
 const CACHE_TTL = 3600; // 1 hour in seconds
+
+// Add this function to invalidate user-related caches
+export async function invalidateUserCaches(userId: string) {
+  log.info({ userId }, `Invalidating user caches for userId`);
+  const keys = await redis.keys(`user:${userId}*`);
+  if (keys.length > 0) {
+    await redis.del(...keys);
+  }
+}
 
 export const getUserStats = async (userId: string) => {
   log.info(`Fetching user stats called for userId: ${userId}`);
@@ -95,9 +105,14 @@ export const getUserStats = async (userId: string) => {
     log.info(`Storing user stats in cache for userId: ${userId}`);
     await setRedisValue(cacheKey, stats, CACHE_TTL);
 
+    // Invalidate other user-related caches
+    await invalidateUserCaches(userId);
+
     return stats;
   } catch (error) {
-    log.error(`Error fetching user stats for userId: ${userId}. Error: ${error}`);
+    log.error(
+      `Error fetching user stats for userId: ${userId}. Error: ${error}`,
+    );
     if (error instanceof ErrorWithStatus) {
       throw error;
     }
