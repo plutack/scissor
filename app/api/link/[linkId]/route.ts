@@ -64,7 +64,7 @@ export async function PATCH(
       { status: 200 },
     );
   } catch (error) {
-    log.error("Error in PATCH request", error);
+    log.error("Error in PATCH request", { error });
     if (error instanceof ErrorWithStatus) {
       return Response.json(
         { success: false, message: error.message },

@@ -33,8 +33,9 @@ export async function POST(request: Request, response: Response) {
 
     const user = await sanitizeUser(email);
 
+    // FIXME get better way to  get token, decode method?
     const accessToken = cookies().get("authjs.session-token")?.value;
-    log.debug("accessToken", accessToken);
+    
     return Response.json({
       success: true,
       accessToken,

@@ -106,7 +106,7 @@ export const createLink = async (
 
     return { success: true, data };
   } catch (error) {
-    log.error(`Error creating link: ${error}`);
+    log.error("Error creating link", { error });
     throw new ErrorWithStatus("Failed to create link", 500);
   }
 };
@@ -119,7 +119,7 @@ export const getLink = async (linkId: string, userId: string | undefined) => {
     // Try to get data from cache
     const cachedData = await getRedisValue<any>(cacheKey);
     if (cachedData) {
-      log.info(`Link found in cache for linkId: ${linkId}`);
+      log.info("Link found in cache for linkId", { linkId });
       return cachedData;
     }
 
@@ -138,43 +138,42 @@ export const getLink = async (linkId: string, userId: string | undefined) => {
 
     return link;
   } catch (error) {
-    log.error(`Error fetching link: ${error}`);
+    log.error("Error fetching link", { error });
     throw new ErrorWithStatus("Failed to fetch link", 500);
   }
 };
 
 export const getLinkByCustomSuffix = async (customSuffix: string) => {
-  log.info(`Fetching link for customSuffix: ${customSuffix}`);
+  log.info("Fetching link for customSuffix", { customSuffix });
   try {
     const cacheKey = `link:${customSuffix}`;
 
     // Try to get data from cache
     const cachedData = await getRedisValue<any>(cacheKey);
     if (cachedData) {
-      log.info(`Link found in cache for customSuffix: ${customSuffix}`);
+      log.info("Link found in cache for customSuffix", { customSuffix });
       return cachedData;
     }
 
     log.info(
-      `Link not found in cache for customSuffix: ${customSuffix}, fetching from database`,
+      "Link not found in cache for customSuffix, fetching from database",
+      { customSuffix },
     );
     // If not in cache, fetch from database
     const link = await db.link.findUnique({ where: { customSuffix } });
     if (link) {
-      log.info(
-        `Link found in database for customSuffix: ${customSuffix}, storing in cache`,
-      );
+      log.info("Link found in database for customSuffix, storing in cache", {
+        customSuffix,
+      });
       // Store in cache
       await setRedisValue(cacheKey, link, CACHE_TTL);
       return link;
     } else {
-      log.warn(`Link not found for customSuffix: ${customSuffix}`);
+      log.warn("Link not found for customSuffix", { customSuffix });
       return null;
     }
   } catch (error) {
-    log.error(
-      `Error fetching link for customSuffix: ${customSuffix}. Error: ${error}`,
-    );
+    log.error("Error fetching link for customSuffix", { customSuffix, error });
     throw new ErrorWithStatus("Failed to fetch link", 500);
   }
 };
@@ -218,7 +217,7 @@ export const updateLink = async (
 
     return { success: true, data: updatedLink };
   } catch (error) {
-    log.error(`Error updating link: ${error}`);
+    log.error("Error updating link", { error });
     throw new ErrorWithStatus("Failed to update link", 500);
   }
 };
@@ -231,7 +230,7 @@ export const getUserTopCountries = async (userId: string) => {
     // Try to get data from cache
     const cachedData = await getRedisValue<any>(cacheKey);
     if (cachedData) {
-      log.info(`Top countries found in cache for userId: ${userId}`);
+      log.info("Top countries found in cache for userId", { userId });
       return cachedData;
     }
 
@@ -262,7 +261,7 @@ export const getUserTopCountries = async (userId: string) => {
 
     return formattedData;
   } catch (error) {
-    log.error(`Error fetching top countries: ${error}`);
+    log.error("Error fetching top countries", { error });
     throw new ErrorWithStatus("Failed to fetch top countries", 500);
   }
 };
@@ -325,7 +324,7 @@ export const updateDbOnLinkClick = async (
       return { updatedLink, updatedVisit };
     });
   } catch (error) {
-    log.error(`Error updating database on link click: ${error}`);
+    log.error("Error updating database on link click", { error });
     throw new ErrorWithStatus("Failed to update database on link click", 500);
   }
 };
@@ -337,7 +336,7 @@ export const getLinkStats = async (linkId: string, userId: string) => {
     // Try to get data from cache
     const cachedData = await getRedisValue<any>(cacheKey);
     if (cachedData) {
-      log.info(`Link stats found in cache for linkId: ${linkId}`);
+      log.info("Link stats found in cache for linkId", { linkId });
       return cachedData;
     }
 
@@ -393,7 +392,7 @@ export const getLinkStats = async (linkId: string, userId: string) => {
 
     return result;
   } catch (error) {
-    log.error(`Error fetching link stats: ${error}`);
+    log.error("Error fetching link stats", { error });
     if (error instanceof ErrorWithStatus) {
       throw error;
     }
@@ -404,15 +403,18 @@ export const getLinkStats = async (linkId: string, userId: string) => {
 // Helper function to invalidate link-related caches
 async function invalidateLinkCaches(userId: string | undefined) {
   if (userId) {
+    log.info("Invalidating link caches for userId", { userId });
     const allLinksCachePrefix = `allLinks:${userId}`;
     const allLinksKeys = await redis.keys(`${allLinksCachePrefix}*`);
     if (allLinksKeys.length > 0) {
       await redis.del(...allLinksKeys);
+      log.info("All links caches invalidated for userId", { userId });
     }
   }
 
   const topCountriesCacheKey = userId ? `topCountries:${userId}` : null;
   if (topCountriesCacheKey) {
     await redis.del(topCountriesCacheKey);
+    log.info("Top countries cache invalidated for userId", { userId });
   }
 }
