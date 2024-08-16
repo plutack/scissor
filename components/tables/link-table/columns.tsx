@@ -20,7 +20,11 @@ export const columns: ColumnDef<Link>[] = [
   {
     accessorKey: "link",
     header: "Link",
-    cell: ({ row }) => renderDashForNull(row.getValue("link")),
+    cell: ({ row }) => (
+      <div className="max-w-[500px] truncate text-left">
+        {renderDashForNull(row.getValue("link"))}
+      </div>
+    ),
   },
   {
     accessorKey: "customSuffix",
