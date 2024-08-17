@@ -71,7 +71,7 @@ export default function LinkAnalyticsPage() {
     queryKey: ["link", linkId],
     queryFn,
   });
-
+  console.log(apiResponse, "apiResponse");
   if (isLoading)
     return (
       <div className="flex h-full items-center justify-center">
