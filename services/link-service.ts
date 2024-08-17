@@ -95,7 +95,7 @@ export const createLink = async (
     });
 
     // Invalidate cache for getAllLinks and user stats
-    await invalidateLinkCaches(userId);
+    await invalidateLinkCaches(userId, data.id);
     if (userId) {
       await invalidateUserCaches(userId);
     }
@@ -204,7 +204,7 @@ export const updateLink = async (
     });
 
     // Invalidate caches
-    await invalidateLinkCaches(userId);
+    await invalidateLinkCaches(userId, linkId);
     await invalidateUserCaches(userId);
 
     // Update cache
@@ -308,7 +308,11 @@ export const updateDbOnLinkClick = async (
       });
 
       // Invalidate caches
-      await invalidateLinkCaches(updatedLink.userId ?? undefined);
+      log.info(
+        { userId: updatedLink.userId },
+        `Invalidating link caches for userId`,
+      );
+      await invalidateLinkCaches(updatedLink.userId ?? undefined, updatedLink.id);
       log.info(
         { userId: updatedLink.userId },
         `Invalidating user caches for userId`,
@@ -320,6 +324,10 @@ export const updateDbOnLinkClick = async (
       // Update cache
       const linkCacheKey = `link:${customSuffix}`;
       await setRedisValue(linkCacheKey, updatedLink, CACHE_TTL);
+
+      // Invalidate cache for the old custom suffix
+      const oldLinkCacheKey = `link:${updatedLink.id}`;
+      await redis.del(oldLinkCacheKey);
 
       return { updatedLink, updatedVisit };
     });
@@ -401,7 +409,7 @@ export const getLinkStats = async (linkId: string, userId: string) => {
 };
 
 // Helper function to invalidate link-related caches
-async function invalidateLinkCaches(userId: string | undefined) {
+async function invalidateLinkCaches(userId: string | undefined, linkId?: string) {
   if (userId) {
     log.info("Invalidating link caches for userId", { userId });
     const allLinksCachePrefix = `allLinks:${userId}`;
@@ -416,5 +424,19 @@ async function invalidateLinkCaches(userId: string | undefined) {
   if (topCountriesCacheKey) {
     await redis.del(topCountriesCacheKey);
     log.info("Top countries cache invalidated for userId", { userId });
+  }
+
+  // Invalidate individual link cache
+  if (linkId) {
+    const linkCacheKey = `link:${linkId}`;
+    await redis.del(linkCacheKey);
+    log.info("Individual link cache invalidated", { linkId });
+  }
+
+  // Invalidate link stats cache
+  if (linkId && userId) {
+    const linkStatsCacheKey = `linkStats:${linkId}`;
+    await redis.del(linkStatsCacheKey);
+    log.info("Link stats cache invalidated", { linkId });
   }
 }

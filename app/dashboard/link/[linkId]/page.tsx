@@ -64,14 +64,14 @@ export default function LinkAnalyticsPage() {
   const queryFn: QueryFunction<ApiResponse> = () =>
     fetchLinkData(`/api/link/${linkId}`) as Promise<ApiResponse>;
   const {
-    data: apiResponse,
+    data,
     isLoading,
     error,
   } = useQuery<ApiResponse, Error>({
     queryKey: ["link", linkId],
     queryFn,
   });
-  console.log(apiResponse, "apiResponse");
+
   if (isLoading)
     return (
       <div className="flex h-full items-center justify-center">
@@ -79,7 +79,7 @@ export default function LinkAnalyticsPage() {
       </div>
     );
 
-  if (error) return notFound();
+  if (error || !data) return notFound();
 
   const {
     link,
@@ -87,7 +87,7 @@ export default function LinkAnalyticsPage() {
     uniqueCountriesCount,
     top5Countries,
     countryStats,
-  } = apiResponse!.data;
+  } = data.data;
 
   const calculatedAverage =
     uniqueCountriesCount > 0
