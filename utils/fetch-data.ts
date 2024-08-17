@@ -1,6 +1,7 @@
 import ky from "ky";
 
-const fetchLinkData = async (endpoint: string) => {
+const fetchLinkData = async (path: string) => {
+  const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/${path}`;
   const response = await ky.get(endpoint).json();
   return response;
 };
