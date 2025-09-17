@@ -12,7 +12,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && patch-package && next build",
+    "build": "prisma generate && npx patch-package && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
