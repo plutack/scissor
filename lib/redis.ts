@@ -1,43 +1,55 @@
-import { Redis } from "@upstash/redis";
+import { createClient } from "redis";
 import logger from "@/lib/logger";
 
 const log = logger.child({ service: "redis-client" });
 
-export const redis = Redis.fromEnv();
+export const redis = createClient({
+	url: process.env.REDIS_URL,
+});
+
+redis
+	.connect()
+	.then(() => {
+		console.log(" Redis connected");
+	})
+	.catch((err) => {
+		console.error(" Redis connection failed:", err);
+		process.exit(1);
+	});
 
 export const getRedisValue = async <T>(key: string): Promise<T | null> => {
-  try {
-    const value = await redis.get(key);
-    log.info("Redis value fetched for key", { key });
-    if (typeof value === "string") {
-      try {
-        return JSON.parse(value);
-      } catch (parseError) {
-        log.error("Error parsing Redis value for key", { key, parseError });
-        return null;
-      }
-    }
-    return value as T;
-  } catch (error) {
-    log.error("Error getting Redis value for key", { key, error });
-    return null;
-  }
+	try {
+		const value = await redis.get(key);
+		log.info("Redis value fetched for key", { key });
+		if (typeof value === "string") {
+			try {
+				return JSON.parse(value);
+			} catch (parseError) {
+				log.error("Error parsing Redis value for key", { key, parseError });
+				return null;
+			}
+		}
+		return value as T;
+	} catch (error) {
+		log.error("Error getting Redis value for key", { key, error });
+		return null;
+	}
 };
 
 export const setRedisValue = async <T>(
-  key: string,
-  value: T,
-  expirationInSeconds?: number,
+	key: string,
+	value: T,
+	expirationInSeconds?: number,
 ): Promise<void> => {
-  try {
-    const stringValue = JSON.stringify(value);
-    if (expirationInSeconds) {
-      await redis.set(key, stringValue, { ex: expirationInSeconds });
-    } else {
-      await redis.set(key, stringValue);
-    }
-    log.info("Redis value set for key", { key });
-  } catch (error) {
-    log.error("Error setting Redis value for key", { key, error });
-  }
+	try {
+		const stringValue = JSON.stringify(value);
+		if (expirationInSeconds) {
+			await redis.set(key, stringValue, { EX: expirationInSeconds });
+		} else {
+			await redis.set(key, stringValue);
+		}
+		log.info("Redis value set for key", { key });
+	} catch (error) {
+		log.error("Error setting Redis value for key", { key, error });
+	}
 };

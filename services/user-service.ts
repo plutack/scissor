@@ -6,160 +6,159 @@ import logger from "@/lib/logger";
 import { redis } from "@/lib/redis";
 
 const log = logger.child({
-  service: "user-service",
+	service: "user-service",
 });
 
 const CACHE_TTL = 3600; // 1 hour in seconds
 
 // Add this function to invalidate user-related caches
 export async function invalidateUserCaches(userId: string) {
-  log.info("Invalidating user caches for userId", { userId });
-  const keys = await redis.keys(`user:${userId}*`);
-  if (keys.length > 0) {
-    await redis.del(...keys);
-    log.info("User caches invalidated for userId", { userId });
-  }
+	log.info("Invalidating user caches for userId", { userId });
+	const keys = await redis.keys(`user:${userId}*`);
+	if (keys.length > 0) {
+		await redis.del(keys);
+		log.info("User caches invalidated for userId", { userId });
+	}
 }
 
 export const getUserStats = async (userId: string) => {
-  log.info("Fetching user stats called for userId", { userId });
-  try {
-    const cacheKey = `user:${userId}:stats`;
+	log.info("Fetching user stats called for userId", { userId });
+	try {
+		const cacheKey = `user:${userId}:stats`;
 
-    // Try to get data from cache
-    const cachedData = await getRedisValue<any>(cacheKey);
-    if (cachedData) {
-      log.info("User stats found in cache for userId", { userId });
-      return cachedData;
-    } else {
-      log.info("User stats not found in cache for userId", { userId });
-    }
+		// Try to get data from cache
+		const cachedData = await getRedisValue<any>(cacheKey);
+		if (cachedData) {
+			log.info("User stats found in cache for userId", { userId });
+			return cachedData;
+		} else {
+			log.info("User stats not found in cache for userId", { userId });
+		}
 
-    // If not in cache, fetch from database
-    log.info("Fetching user stats from database for userId", { userId });
-    const data = await db.user.findUnique({
-      where: { id: userId },
-    });
-    if (!data) {
-      log.warn("User not found in database for ID", { userId });
-      throw new ErrorWithStatus("User not found", 404);
-    }
-    const { id, email, name } = data;
+		// If not in cache, fetch from database
+		log.info("Fetching user stats from database for userId", { userId });
+		const data = await db.user.findUnique({
+			where: { id: userId },
+		});
+		if (!data) {
+			log.warn("User not found in database for ID", { userId });
+			throw new ErrorWithStatus("User not found", 404);
+		}
+		const { id, email, name } = data;
 
-    const totalLinksCreated = await db.link.count({
-      where: { userId },
-    });
+		const totalLinksCreated = await db.link.count({
+			where: { userId },
+		});
 
-    // Total unique links across all links created by the user
-    const uniqueLinksCount = await db.link
-      .findMany({
-        where: { userId },
-        distinct: ["link"],
-        select: {
-          link: true,
-        },
-      })
-      .then((links) => links.length);
+		// Total unique links across all links created by the user
+		const uniqueLinksCount = await db.link
+			.findMany({
+				where: { userId },
+				distinct: ["link"],
+				select: {
+					link: true,
+				},
+			})
+			.then((links) => links.length);
 
-    // Last 5 links created by the user
-    const lastFiveLinks = await db.link.findMany({
-      where: { userId },
-      select: {
-        link: true,
-        customSuffix: true,
-      },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-    });
+		// Last 5 links created by the user
+		const lastFiveLinks = await db.link.findMany({
+			where: { userId },
+			select: {
+				link: true,
+				customSuffix: true,
+			},
+			orderBy: { createdAt: "desc" },
+			take: 5,
+		});
 
-    // Top 5 countries by click count across all links
-    const topCountries = await db.visit.findMany({
-      where: {
-        link: {
-          userId,
-        },
-      },
-      select: {
-        country: true,
-        count: true,
-      },
-      orderBy: {
-        count: "desc",
-      },
-      take: 5,
-    });
+		// Top 5 countries by click count across all links
+		const topCountries = await db.visit.findMany({
+			where: {
+				link: {
+					userId,
+				},
+			},
+			select: {
+				country: true,
+				count: true,
+			},
+			orderBy: {
+				count: "desc",
+			},
+			take: 5,
+		});
 
-    const stats = {
-      userId: id,
-      email,
-      name,
-      totalLinksCreated,
-      uniqueLinksCount,
-      lastFiveLinks,
-      topCountries: topCountries.map(({ country, count }) => ({
-        country,
-        clickCount: count,
-      })),
-    };
+		const stats = {
+			userId: id,
+			email,
+			name,
+			totalLinksCreated,
+			uniqueLinksCount,
+			lastFiveLinks,
+			topCountries: topCountries.map(({ country, count }) => ({
+				country,
+				clickCount: count,
+			})),
+		};
 
-    // Store in cache
-    log.info(`Storing user stats in cache for userId: ${userId}`);
-    await setRedisValue(cacheKey, stats, CACHE_TTL);
+		// Store in cache
+		log.info(`Storing user stats in cache for userId: ${userId}`);
+		await setRedisValue(cacheKey, stats, CACHE_TTL);
 
-    // Invalidate other user-related caches
-    await invalidateUserCaches(userId);
-    log.info("User stats stored in cache for userId", { userId });
+		// Invalidate other user-related caches
+		await invalidateUserCaches(userId);
+		log.info("User stats stored in cache for userId", { userId });
 
-    return stats;
-  } catch (error) {
-    log.error("Error fetching user stats for userId", { userId, error });
-    if (error instanceof ErrorWithStatus) {
-      throw error;
-    }
-    throw new ErrorWithStatus(
-      "An error occurred while fetching user stats",
-      500,
-    );
-  }
+		return stats;
+	} catch (error) {
+		log.error("Error fetching user stats for userId", { userId, error });
+		if (error instanceof ErrorWithStatus) {
+			throw error;
+		}
+		throw new ErrorWithStatus(
+			"An error occurred while fetching user stats",
+			500,
+		);
+	}
 };
 
 export const getUserByEmail = async (email: string) => {
-  try {
-    const cacheKey = `user:${email}`;
+	try {
+		const cacheKey = `user:${email}`;
 
-    // Try to get data from cache
-    const cachedData = await getRedisValue<User>(cacheKey);
-    if (cachedData) {
-      log.info("User found in cache for email", { email });
-      return cachedData;
-    }
+		// Try to get data from cache
+		const cachedData = await getRedisValue<User>(cacheKey);
+		if (cachedData) {
+			log.info("User found in cache for email", { email });
+			return cachedData;
+		}
 
-    // If not in cache, fetch from database
-    const user = await db.user.findUnique({ where: { email } });
-    if (user) {
-      // Store in cache
-      await setRedisValue(cacheKey, user, CACHE_TTL);
-    }
-    return user;
-  } catch (error) {
-    log.error("Error fetching user by email", { email, error });
-    return null;
-  }
+		// If not in cache, fetch from database
+		const user = await db.user.findUnique({ where: { email } });
+		if (user) {
+			// Store in cache
+			await setRedisValue(cacheKey, user, CACHE_TTL);
+		}
+		return user;
+	} catch (error) {
+		log.error("Error fetching user by email", { email, error });
+		return null;
+	}
 };
 
 export const sanitizeUser = async (
-  email: string,
+	email: string,
 ): Promise<Omit<User, "password" | "image"> | null> => {
-  log.info("Sanitizing user called");
-  const userData = await getUserByEmail(email);
+	log.info("Sanitizing user called");
+	const userData = await getUserByEmail(email);
 
-  if (!userData) {
-    log.error("User not found", { email });
-    return null;
+	if (!userData) {
+		log.error("User not found", { email });
+		return null;
+	}
 
-  }
-
-  const { password, image, ...user } = userData;
-  log.info("Sanitized user", { user });
-  return user;
+	const { password, image, ...user } = userData;
+	log.info("Sanitized user", { user });
+	return user;
 };
