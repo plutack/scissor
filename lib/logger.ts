@@ -1,18 +1,24 @@
-import pino, { Logger } from "pino";
+import pino from "pino";
 
-const logger: Logger =
-  process.env["NODE_ENV"] === "production"
-    ? // JSON in production
-      pino({ level: "info" })
-    : // Pretty print in development
-      pino({
-        transport: {
-          target: "pino-pretty",
-          options: {
-            colorize: true,
-          },
-        },
-        level: "debug",
-      });
+const logger =
+	process.env.NODE_ENV === "production"
+		? pino({ level: "info" })
+		: pino({
+				transport: {
+					target: "pino-pretty",
+					options: {
+						colorize: true,
+						translateTime: "HH:MM:ss",
+						singleLine: true,
+						ignore: "pid,hostname",
+					},
+				},
+				level: "debug",
+				serializers: {
+					err: (err: Error) => ({
+						message: err.message,
+					}),
+				},
+			});
 
 export default logger;
