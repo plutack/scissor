@@ -1,0 +1,35 @@
+diff --git a/node_modules/rate-limiter-flexible/lib/RateLimiterDrizzle.js b/node_modules/rate-limiter-flexible/lib/RateLimiterDrizzle.js
+index 7c00996..8b91be2 100644
+--- a/node_modules/rate-limiter-flexible/lib/RateLimiterDrizzle.js
++++ b/node_modules/rate-limiter-flexible/lib/RateLimiterDrizzle.js
+@@ -12,18 +12,18 @@ class RateLimiterDrizzleError extends Error {
+ async function getDrizzleOperators() {
+   if (drizzleOperators) return drizzleOperators;
+ 
+-  try {
+-    // Use dynamic import to prevent static analysis tools from detecting the import
+-    const drizzleOrm = await import('drizzle-orm');
+-    const { and, or, gt, lt, eq, isNull, sql } = drizzleOrm.default || drizzleOrm;
+-    drizzleOperators = { and, or, gt, lt, eq, isNull, sql };
+-    return drizzleOperators;
+-  } catch (error) {
+-    throw new RateLimiterDrizzleError(
+-      'drizzle-orm is not installed. Please install drizzle-orm to use RateLimiterDrizzle.'
+-    );
+-  }
+-}
++//   try {
++//     // Use dynamic import to prevent static analysis tools from detecting the import
++//     const drizzleOrm = await import('drizzle-orm');
++//     const { and, or, gt, lt, eq, isNull, sql } = drizzleOrm.default || drizzleOrm;
++//     drizzleOperators = { and, or, gt, lt, eq, isNull, sql };
++//     return drizzleOperators;
++//   } catch (error) {
++//     throw new RateLimiterDrizzleError(
++//       'drizzle-orm is not installed. Please install drizzle-orm to use RateLimiterDrizzle.'
++//     );
++//   }
++// }
+ 
+ const RateLimiterStoreAbstract = require('./RateLimiterStoreAbstract');
+ const RateLimiterRes = require('./RateLimiterRes');
